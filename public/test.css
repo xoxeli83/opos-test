@@ -1,0 +1,195 @@
+.navlink{
+  text-decoration:none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 650;
+}
+
+.muted{ color: var(--muted); }
+
+.test-header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.test-header h1{ margin:0; font-size: 28px; }
+
+.timer{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  min-width: 120px;
+  text-align: right;
+}
+.timer-label{ font-size: 12px; color: var(--muted); }
+.timer-value{ font-size: 20px; font-weight: 800; letter-spacing: .3px; }
+
+.test-shell{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap: 14px;
+}
+@media (max-width: 980px){
+  .test-shell{ grid-template-columns: 1fr; }
+}
+
+.panel{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+.panel-title{ font-weight: 800; margin-bottom: 10px; }
+.progress{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom: 12px;
+}
+
+.grid-mini{
+  display:grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.mini{
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  padding: 8px 0;
+  font-weight: 800;
+  cursor:pointer;
+}
+.mini.answered{ background: rgba(60,255,180,.14); }
+.mini.current{ outline: 2px solid rgba(0,200,255,.55); }
+
+.panel-actions{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card-test{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.q-top{
+  display:flex;
+  justify-content:space-between;
+  gap: 10px;
+  align-items:center;
+  margin-bottom: 10px;
+}
+.q-badge{
+  display:inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+}
+.q-text{
+  margin: 6px 0 14px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.options{
+  display:grid;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+.opt{
+  display:flex;
+  gap: 10px;
+  align-items:flex-start;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  cursor:pointer;
+}
+.opt:hover{ background: rgba(255,255,255,.08); }
+.opt input{ margin-top: 3px; }
+.opt .label{ font-weight: 700; }
+.opt .text{ color: var(--text); }
+
+.q-actions{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn{
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight: 800;
+}
+.btn:hover{ background: rgba(255,255,255,.14); }
+.btn.ghost{ background: rgba(255,255,255,.06); }
+
+.q-hint{ font-size: 13px; margin-top: 10px; }
+
+.hidden{ display:none; }
+
+.result-grid{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 14px 0 10px;
+}
+@media (max-width: 680px){
+  .result-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+.result-item{
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 12px;
+}
+.big{ font-size: 22px; font-weight: 900; }
+
+.passline{
+  margin: 8px 0 16px;
+  font-weight: 900;
+}
+.pass-ok{ color: rgba(60,255,180,.95); }
+.pass-bad{ color: rgba(255,120,120,.95); }
+
+.review{
+  display:grid;
+  gap: 8px;
+}
+.rev{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  border-radius: 14px;
+  padding: 12px;
+}
+.rev .top{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.rev .ans{
+  font-weight: 800;
+}
+.rev.ok{ border-color: rgba(60,255,180,.35); }
+.rev.bad{ border-color: rgba(255,120,120,.35); }
+.rev.blank{ border-color: rgba(255,255,255,.15); }
+
