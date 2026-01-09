@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test · Opos Test</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="test.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="dot"></span>
+      <span>Opos Test</span>
+    </div>
+
+    <nav class="nav">
+      <a class="navlink" href="/">Inicio</a>
+      <a class="navlink" href="/#temario">Temario</a>
+      <a class="navlink" href="/#tests">Tests</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="test-header">
+    <div>
+      <h1 id="testTitle">Test</h1>
+      <p class="muted" id="testRules">
+        80 min · 4 opciones · +1 acierto · −0,25 fallo · 0 blanco · APTO ≥ 30
+      </p>
+    </div>
+
+    <div class="timer">
+      <div class="timer-label">Tiempo</div>
+      <div class="timer-value" id="timeLeft">80:00</div>
+    </div>
+  </section>
+
+  <section class="test-shell">
+    <aside class="panel">
+      <div class="panel-title">Progreso</div>
+      <div class="progress">
+        <div><span id="idxNow">1</span>/<span id="idxTotal">0</span></div>
+        <div class="muted"><span id="answeredCount">0</span> respondidas</div>
+      </div>
+
+      <div class="grid-mini" id="navGrid"></div>
+
+      <div class="panel-actions">
+        <button class="btn" id="btnFinish">Finalizar</button>
+        <button class="btn ghost" id="btnReset">Reiniciar</button>
+      </div>
+    </aside>
+
+    <section class="card-test">
+      <div class="q-top">
+        <div class="q-badge" id="qBadge">Pregunta</div>
+        <div class="muted" id="qMeta"></div>
+      </div>
+
+      <h2 class="q-text" id="qText">Cargando…</h2>
+
+      <form class="options" id="options"></form>
+
+      <div class="q-actions">
+        <button class="btn ghost" id="btnPrev">Anterior</button>
+        <button class="btn" id="btnNext">Siguiente</button>
+      </div>
+
+      <div class="q-hint muted">
+        Deja en blanco si no estás seguro (no penaliza).
+      </div>
+    </section>
+  </section>
+
+  <section class="result card-test hidden" id="resultBox">
+    <h2>Resultado</h2>
+
+    <div class="result-grid">
+      <div class="result-item"><div class="muted">Aciertos</div><div id="rOk" class="big">0</div></div>
+      <div class="result-item"><div class="muted">Fallos</div><div id="rBad" class="big">0</div></div>
+      <div class="result-item"><div class="muted">Blancos</div><div id="rBlank" class="big">0</div></div>
+      <div class="result-item"><div class="muted">Puntuación</div><div id="rScore" class="big">0</div></div>
+    </div>
+
+    <div class="passline" id="passLine">—</div>
+
+    <div class="panel-actions">
+      <button class="btn" id="btnDownload">Descargar respuestas</button>
+      <a class="btn ghost" href="/">Volver al inicio</a>
+    </div>
+
+    <h3>Revisión</h3>
+    <div class="review" id="review"></div>
+  </section>
+
+</main>
+
+<script src="test.js"></script>
+</body>
+</html>
