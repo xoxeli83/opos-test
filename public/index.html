@@ -4,18 +4,98 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Opos Test</title>
-  <style>
-    body { font-family: system-ui, Arial; margin: 20px; }
-    a { display:block; margin: 10px 0; font-size: 18px; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Opos Test</h1>
 
-  <h2>Temario (PDF)</h2>
-  <a href="/pdf/Tema1.pdf" target="_blank" rel="noreferrer">📘 Tema 1 (PDF)</a>
+  <!-- Menú fijo -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>Opos Test</span>
+      </div>
 
-  <h2>Tests</h2>
-  <p>(aún por crear)</p>
+      <nav class="nav">
+        <div class="dropdown">
+          <button>Temario <span class="chev"></span></button>
+          <div class="menu">
+            <a href="/pdf/Tema1.pdf">1. Constitución <small>PDF</small></a>
+            <a href="#">2. Zona Franca <small>PDF</small></a>
+            <a href="#">3. Polígonos <small>PDF</small></a>
+            <a href="#">4. Sector público <small>PDF</small></a>
+            <a href="#">5. EBEP <small>PDF</small></a>
+            <a href="#">6. Estatuto Trabajadores <small>PDF</small></a>
+            <a href="#">7. PRL <small>PDF</small></a>
+            <a href="#">8. Igualdad <small>PDF</small></a>
+            <a href="#">9. Seguridad vial <small>PDF</small></a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button>Test <span class="chev"></span></button>
+          <div class="menu">
+            <a href="#">Test Tema 1</a>
+            <a href="#">Test Tema 2</a>
+            <a href="#">Test Tema 3</a>
+            <a href="#">Test Tema 4</a>
+            <a href="#">Test Tema 5</a>
+            <a href="#">Test Tema 6</a>
+            <a href="#">Test Tema 7</a>
+            <a href="#">Test Tema 8</a>
+            <a href="#">Test Tema 9</a>
+            <a href="#" class="highlight">🎯 Test General (65)</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <main class="wrap">
+    <section class="hero">
+      <h1>Preparación de oposiciones</h1>
+      <p>Accede al temario oficial en PDF y practica con tests por tema o simulacros de examen.</p>
+    </section>
+
+    <section class="grid">
+      <!-- BLOQUE TEMARIO -->
+      <div class="card">
+        <h2>📘 Temario</h2>
+        <p>Consulta cada tema en PDF.</p>
+        <div class="list">
+          <a href="/pdf/Tema1.pdf">Tema 1 · Constitución</a>
+          <a href="#">Tema 2 · Zona Franca</a>
+          <a href="#">Tema 3 · Polígonos</a>
+          <a href="#">Tema 4 · Sector público</a>
+          <a href="#">Tema 5 · EBEP</a>
+          <a href="#">Tema 6 · Estatuto Trabajadores</a>
+          <a href="#">Tema 7 · PRL</a>
+          <a href="#">Tema 8 · Igualdad</a>
+          <a href="#">Tema 9 · Seguridad vial</a>
+        </div>
+      </div>
+
+      <!-- BLOQUE TEST -->
+      <div class="card">
+        <h2>📝 Tests</h2>
+        <p>Practica por temas o haz un simulacro real.</p>
+        <div class="list">
+          <a href="#">Test Tema 1</a>
+          <a href="#">Test Tema 2</a>
+          <a href="#">Test Tema 3</a>
+          <a href="#">Test Tema 4</a>
+          <a href="#">Test Tema 5</a>
+          <a href="#">Test Tema 6</a>
+          <a href="#">Test Tema 7</a>
+          <a href="#">Test Tema 8</a>
+          <a href="#">Test Tema 9</a>
+          <a href="#" class="highlight">🎯 Test General (65 preguntas)</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
