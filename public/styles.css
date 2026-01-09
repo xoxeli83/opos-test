@@ -129,4 +129,25 @@ body{
   font-weight:700;
   color:#ffd479;
 }
+.tag{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+.pill{
+  margin-left:8px;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  vertical-align:middle;
+}
+.blank{
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.85);
+}
 
