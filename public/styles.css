@@ -191,3 +191,9 @@ body{
 .menu-row:hover{
   background:#ffffff14;
 }
+.list-row{
+  padding:8px 0;
+}
+.list-row > a:first-child{
+  padding:0;
+}
