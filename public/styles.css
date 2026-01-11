@@ -180,3 +180,14 @@ body{
 .zf-btn:hover{
   background:rgba(0,207,255,.18);
 }
+/* Mejor alineación en menú dropdown cuando hay botones laterales */
+.menu-row{
+  padding:6px 8px;
+}
+.menu-row > a:first-child{
+  padding:10px 12px;
+  border-bottom:none;
+}
+.menu-row:hover{
+  background:#ffffff14;
+}
