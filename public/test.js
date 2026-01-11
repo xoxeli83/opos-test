@@ -161,9 +161,6 @@ const el = {
   btnFinish: document.getElementById("btnFinish"),
   btnReset: document.getElementById("btnReset"),
 
-  // feedback inmediato (añade este div en test.html como te dije)
-  feedback: document.getElementById("feedback"),
-
   // resultado
   resultBox: document.getElementById("resultBox"),
   rOk: document.getElementById("rOk"),
@@ -208,8 +205,8 @@ function renderNavGrid() {
     b.className = "mini";
     b.textContent = String(i + 1);
 
-    if (i === idx) b.classList.add("active");
-    if (respuestas[i] !== null) b.classList.add("done");
+    if (i === idx) b.classList.add("current");
+    if (respuestas[i] !== null) b.classList.add("answered");
 
     b.addEventListener("click", () => {
       idx = i;
@@ -220,21 +217,38 @@ function renderNavGrid() {
   });
 }
 
-function renderFeedback() {
-  if (!el.feedback) return;
+// pinta colores en opciones para PRACTICE (tema)
+function aplicarColoresOpcionesPractice() {
+  if (!el.options) return;
 
-  if (modo === "practice" && respuestas[idx] !== null) {
-    const q = preguntas[idx];
-    const elegido = respuestas[idx];
-    const ok = elegido === q.correctaIndex;
-    const correctaTexto = q.opciones[q.correctaIndex];
+  const q = preguntas[idx];
+  const r = respuestas[idx];
+  if (r === null) return;
 
-    el.feedback.innerHTML = ok
-      ? `✅ Correcta`
-      : `❌ Incorrecta. <b>Correcta:</b> ${escapeHtml(correctaTexto)}`;
-  } else {
-    el.feedback.textContent = "";
+  const botones = Array.from(el.options.querySelectorAll(".opt"));
+
+  // siempre: correcta en verde
+  const btnCorrect = botones[q.correctaIndex];
+  if (btnCorrect) {
+    btnCorrect.classList.add("is-correct");
+    btnCorrect.style.color = "#fff";
   }
+
+  // si falló: elegida en rojo
+  if (r !== q.correctaIndex) {
+    const btnPicked = botones[r];
+    if (btnPicked) {
+      btnPicked.classList.add("is-wrong");
+      btnPicked.style.color = "#fff";
+    }
+  } else {
+    // si acertó, la elegida ya es la correcta (verde)
+    const btnPicked = botones[r];
+    if (btnPicked) btnPicked.style.color = "#fff";
+  }
+
+  // texto blanco en todas (para que se lea sobre rojo/verde)
+  botones.forEach((b) => (b.style.color = "#fff"));
 }
 
 function render() {
@@ -255,7 +269,8 @@ function render() {
 
   // timer (solo examen)
   if (el.timeLeft) {
-    el.timeLeft.parentElement.style.display = modo === "exam" ? "block" : "none";
+    const box = el.timeLeft.closest(".timer");
+    if (box) box.style.display = modo === "exam" ? "block" : "none";
   }
 
   // progreso
@@ -267,14 +282,18 @@ function render() {
 
   // cabecera pregunta
   if (el.qBadge) el.qBadge.textContent = `Pregunta`;
-  if (el.qMeta) el.qMeta.textContent = q.id ? `${q.id}${q.ref ? " · " + q.ref : ""}` : "";
+  if (el.qMeta) {
+    el.qMeta.textContent = q.id ? `${q.id}${q.ref ? " · " + q.ref : ""}` : "";
+  }
 
   // enunciado
   if (el.qText) el.qText.textContent = q.pregunta || "(sin texto)";
 
-  // opciones (botones dentro del form)
+  // opciones (botones)
   if (el.options) {
     el.options.innerHTML = "";
+
+    const locked = modo === "practice" && bloqueadas[idx] === true;
 
     q.opciones.forEach((txt, i) => {
       const btn = document.createElement("button");
@@ -282,18 +301,22 @@ function render() {
       btn.className = "opt";
       btn.textContent = txt;
 
+      // forzar texto blanco (tu fondo es oscuro)
+      btn.style.color = "#fff";
+
       if (respuestas[idx] === i) btn.classList.add("selected");
 
-      const locked = modo === "practice" && bloqueadas[idx] === true;
       btn.disabled = locked;
 
       btn.addEventListener("click", () => onSelect(i));
       el.options.appendChild(btn);
     });
-  }
 
-  // feedback
-  renderFeedback();
+    // si ya respondió en practice, colorear (verde/rojo)
+    if (modo === "practice" && respuestas[idx] !== null) {
+      aplicarColoresOpcionesPractice();
+    }
+  }
 
   // nav grid
   renderNavGrid();
@@ -311,8 +334,11 @@ function onSelect(optionIndex) {
 
   if (modo === "practice") {
     if (bloqueadas[idx]) return;
+
     respuestas[idx] = optionIndex;
     bloqueadas[idx] = true;
+
+    // render para deshabilitar y luego colorear
     render();
     return;
   }
@@ -383,51 +409,33 @@ function calcularNotaExamen() {
 }
 
 // ========================
-// Resultado / revisión
+// Resultado / revisión (solo examen)
 // ========================
-function buildReview() {
+function buildReviewExam() {
   if (!el.review) return;
   el.review.innerHTML = "";
 
   preguntas.forEach((q, i) => {
-    const wrap = document.createElement("div");
-    wrap.className = "review-item";
-
     const r = respuestas[i];
     const ok = r !== null && r === q.correctaIndex;
 
-    const title = document.createElement("div");
-    title.className = "review-title";
-    title.innerHTML = `<b>${i + 1}.</b> ${escapeHtml(q.pregunta)} <span class="muted">(${q.id || ""})</span>`;
-    wrap.appendChild(title);
+    const box = document.createElement("div");
+    box.className = "rev";
+    if (r === null) box.classList.add("blank");
+    else if (ok) box.classList.add("ok");
+    else box.classList.add("bad");
 
-    const ul = document.createElement("ul");
-    ul.className = "review-opts";
+    const top = document.createElement("div");
+    top.className = "top";
+    top.innerHTML = `<div><b>${i + 1}.</b> ${escapeHtml(q.pregunta)}</div><div class="ans">${r === null ? "BLANCO" : ok ? "OK" : "FALLO"}</div>`;
+    box.appendChild(top);
 
-    q.opciones.forEach((opt, idxOpt) => {
-      const li = document.createElement("li");
-      const isCorrect = idxOpt === q.correctaIndex;
-      const isPicked = r === idxOpt;
+    const correct = document.createElement("div");
+    correct.className = "muted";
+    correct.textContent = `Correcta: ${q.opciones[q.correctaIndex]}`;
+    box.appendChild(correct);
 
-      li.innerHTML =
-        `${isPicked ? "👉 " : ""}${escapeHtml(opt)} ` +
-        `${isCorrect ? `<span class="muted">✔ correcta</span>` : ""}`;
-
-      if (isCorrect) li.classList.add("ok");
-      if (isPicked && !isCorrect) li.classList.add("bad");
-
-      ul.appendChild(li);
-    });
-
-    wrap.appendChild(ul);
-
-    const line = document.createElement("div");
-    line.className = "muted";
-    if (r === null) line.textContent = "En blanco.";
-    else line.textContent = ok ? "Correcta." : "Incorrecta.";
-    wrap.appendChild(line);
-
-    el.review.appendChild(wrap);
+    el.review.appendChild(box);
   });
 }
 
@@ -444,9 +452,11 @@ function showResultBox({ aciertos, fallos, blancos, nota }) {
     el.passLine.textContent = apto
       ? `✅ APTO (≥ ${EXAM_SCORE_OK})`
       : `❌ NO APTO (mínimo ${EXAM_SCORE_OK})`;
+    el.passLine.classList.toggle("pass-ok", apto);
+    el.passLine.classList.toggle("pass-bad", !apto);
   }
 
-  buildReview();
+  buildReviewExam();
 }
 
 // descarga respuestas (simple JSON)
@@ -465,12 +475,15 @@ function downloadAnswers() {
     })),
   };
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = modo === "exam" ? "respuestas_examen.json" : `respuestas_tema_${tema}.json`;
+  a.download =
+    modo === "exam" ? "respuestas_examen.json" : `respuestas_tema_${tema}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -487,7 +500,6 @@ function finalizar() {
     return;
   }
 
-  // examen: mostrar caja de resultados y revisión
   const res = calcularNotaExamen();
   showResultBox(res);
 }
@@ -502,7 +514,6 @@ function reset() {
   respuestas = preguntas.map(() => null);
   bloqueadas = preguntas.map(() => false);
 
-  // ocultar resultado si estaba
   setHidden(el.resultBox, true);
 
   if (modo === "exam") startExamTimer();
@@ -517,7 +528,6 @@ function reset() {
   modo = info.modo;
   tema = info.tema;
 
-  // cargar CSVs
   let base = [];
 
   if (modo === "practice") {
@@ -525,7 +535,6 @@ function reset() {
     base = await cargarPreguntasCSVDesdeRuta(ruta);
     base = seleccionarN(base, PRACTICE_N);
   } else {
-    // examen: cargar todos los temas que existan (1..9)
     const rutas = [];
     for (let i = 1; i <= 9; i++) rutas.push(temaToRutaCSV(i));
 
@@ -542,24 +551,22 @@ function reset() {
   }
 
   preguntas = base.map(prepararPreguntaParaMostrar);
-
   respuestas = preguntas.map(() => null);
   bloqueadas = preguntas.map(() => false);
   idx = 0;
 
-  // bind botones (IMPORTANTE: tu HTML ya tiene type="button")
   if (el.btnPrev) el.btnPrev.addEventListener("click", prev);
   if (el.btnNext) el.btnNext.addEventListener("click", next);
   if (el.btnFinish) el.btnFinish.addEventListener("click", finalizar);
   if (el.btnReset) el.btnReset.addEventListener("click", reset);
   if (el.btnDownload) el.btnDownload.addEventListener("click", downloadAnswers);
 
-  // ocultar resultado al inicio
   setHidden(el.resultBox, true);
 
-  // timer solo examen
   if (modo === "exam") startExamTimer();
 
-  // pintar
   render();
+})().catch((e) => {
+  console.error(e);
+  if (el.qText) el.qText.textContent = "Error cargando preguntas.";
 })();
