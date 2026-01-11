@@ -167,19 +167,24 @@ body{
 
 /* ZFV button */
 .zf-btn{
-  font-size:12px;
-  padding:4px 8px;
-  border-radius:8px;
-  border:1px solid rgba(0,207,255,.35);
-  background:rgba(0,207,255,.12);
-  color:#d9f6ff;
-  font-weight:800;
-  text-decoration:none;
-  white-space:nowrap;
+  min-width: 56px;          /* MÁS ANCHO */
+  text-align: center;       /* centra el texto */
+  padding: 6px 10px;        /* un poco más alto y ancho */
+  border-radius: 10px;      /* más “botón” */
+  border: 1px solid rgba(0,207,255,.4);
+  background: rgba(0,207,255,.15);
+  color: #d9f6ff;
+  font-weight: 800;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
 }
+
 .zf-btn:hover{
-  background:rgba(0,207,255,.18);
+  background: rgba(0,207,255,.25);
+  transform: translateY(-1px);
 }
+
 /* Mejor alineación en menú dropdown cuando hay botones laterales */
 .menu-row{
   padding:6px 8px;
