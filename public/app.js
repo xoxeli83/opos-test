@@ -1,12 +1,16 @@
 // ===== Audio bar (index) =====
-(function initAudioBar(){
+document.addEventListener('DOMContentLoaded', () => {
   const audioBar = document.getElementById('audioBar');
-  if (!audioBar) return; // si no estamos en index, salir
+  if (!audioBar) return; // no estamos en index
 
   const audioEl = document.getElementById('audioEl');
   const audioTitle = document.getElementById('audioTitle');
+  const audioMeta = document.getElementById('audioMeta');
   const audioTime = document.getElementById('audioTime');
+
   const audioPlay = document.getElementById('audioPlay');
+  const audioPause = document.getElementById('audioPause');
+  const audioStop = document.getElementById('audioStop');
   const audioSeek = document.getElementById('audioSeek');
   const audioClose = document.getElementById('audioClose');
 
@@ -17,29 +21,45 @@
     return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
   };
 
-  function showBar(){
+  function showBar() {
     audioBar.classList.remove('hidden');
   }
-  function hideBar(){
+
+  function hideBar() {
     audioEl.pause();
     audioEl.removeAttribute('src');
     audioEl.load();
     audioBar.classList.add('hidden');
-    audioPlay.textContent = '▶';
     audioSeek.value = 0;
     audioTime.textContent = '00:00 / 00:00';
   }
 
-  audioPlay.addEventListener('click', () => {
+  function stopAudio() {
+    audioEl.pause();
+    audioEl.currentTime = 0;
+    audioSeek.value = 0;
+    audioTime.textContent = `${fmt(0)} / ${fmt(audioEl.duration)}`;
+  }
+
+  audioPlay?.addEventListener('click', () => {
     if (!audioEl.src) return;
-    if (audioEl.paused) audioEl.play();
+    if (audioEl.paused) audioEl.play().catch(()=>{});
     else audioEl.pause();
   });
 
-  audioClose.addEventListener('click', hideBar);
+  audioPause?.addEventListener('click', () => {
+    if (!audioEl.src) return;
+    audioEl.pause();
+  });
 
-  audioEl.addEventListener('play', () => audioPlay.textContent = '⏸');
-  audioEl.addEventListener('pause', () => audioPlay.textContent = '▶');
+  audioStop?.addEventListener('click', () => {
+    if (!audioEl.src) return;
+    stopAudio();
+  });
+
+  audioClose?.addEventListener('click', () => {
+    hideBar();
+  });
 
   audioEl.addEventListener('loadedmetadata', () => {
     audioSeek.max = String(audioEl.duration || 0);
@@ -58,17 +78,22 @@
   });
 
   // Click en cualquier link con data-audio
-  document.querySelectorAll('[data-audio]').forEach(a => {
-    a.addEventListener('click', (e) => {
+  document.querySelectorAll('[data-audio]').forEach(link => {
+    link.addEventListener('click', (e) => {
       e.preventDefault();
-      const src = a.getAttribute('data-audio');
-      const title = a.getAttribute('data-title') || 'Audio';
+
+      const src = link.getAttribute('data-audio');
+      const title = link.getAttribute('data-title') || 'Audio';
 
       audioTitle.textContent = title;
+      if (audioMeta) audioMeta.textContent = src || '—';
+
       audioEl.src = src;
       audioEl.load();
       showBar();
-      audioEl.play().catch(()=>{ /* si el navegador bloquea autoplay, queda listo */ });
+
+      // Intento de autoplay (si el navegador lo bloquea, quedará listo)
+      audioEl.play().catch(()=>{});
     });
   });
-})();
+});
