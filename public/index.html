@@ -56,7 +56,7 @@
     </div>
   </header>
 
-  <!-- Barra reproductora (aparece al elegir un audio) -->
+  <!-- Barra reproductora (solo aparece al clicar un audio) -->
   <div class="audio-bar hidden" id="audioBar">
     <div class="audio-left">
       <div><strong id="audioTitle">Audio</strong></div>
@@ -64,13 +64,15 @@
     </div>
 
     <div class="audio-controls">
-      <button class="audio-btn" id="audioPlay">▶</button>
-      <button class="audio-btn ghost" id="audioPause">⏸</button>
-      <button class="audio-btn ghost" id="audioStop">⏹</button>
+      <button class="audio-btn" id="audioPlay" type="button">▶</button>
+      <button class="audio-btn ghost" id="audioPause" type="button">⏸</button>
+      <button class="audio-btn ghost" id="audioStop" type="button">⏹</button>
       <input id="audioSeek" type="range" min="0" max="100" value="0" step="0.1" />
     </div>
 
     <div class="audio-meta" id="audioTime">00:00 / 00:00</div>
+
+    <button class="audio-btn ghost" id="audioClose" type="button">✕</button>
 
     <audio id="audioEl" preload="metadata"></audio>
   </div>
@@ -121,21 +123,21 @@
         </div>
       </div>
 
-      <!-- NUEVO: Audios -->
+      <!-- Audios -->
       <div class="card" id="audios">
         <h2>🎧 Audios</h2>
         <p>Resúmenes por tema (se abre la barra superior al reproducir).</p>
 
         <div class="list">
-          <a href="#" class="audio-link" data-audio="/audio/Tema1.mp3" data-title="Tema 1 · Constitución">▶ Tema 1 · Constitución</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema2.mp3" data-title="Tema 2 · Zona Franca">▶ Tema 2 · Zona Franca</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema3.mp3" data-title="Tema 3 · Polígonos / Inmuebles">▶ Tema 3 · Polígonos / Inmuebles</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema4.mp3" data-title="Tema 4 · Sector público institucional">▶ Tema 4 · Sector público institucional</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema5.mp3" data-title="Tema 5 · EBEP">▶ Tema 5 · EBEP</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema6.mp3" data-title="Tema 6 · Estatuto Trabajadores">▶ Tema 6 · Estatuto Trabajadores</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema7.mp3" data-title="Tema 7 · PRL">▶ Tema 7 · PRL</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema8.mp3" data-title="Tema 8 · Igualdad">▶ Tema 8 · Igualdad</a>
-          <a href="#" class="audio-link" data-audio="/audio/Tema9.mp3" data-title="Tema 9 · Seguridad vial">▶ Tema 9 · Seguridad vial</a>
+          <a href="#" data-audio="/audio/Tema1.mp3" data-title="Tema 1 · Constitución">▶ Tema 1 · Constitución</a>
+          <a href="#" data-audio="/audio/Tema2.mp3" data-title="Tema 2 · Zona Franca">▶ Tema 2 · Zona Franca</a>
+          <a href="#" data-audio="/audio/Tema3.mp3" data-title="Tema 3 · Polígonos / Inmuebles">▶ Tema 3 · Polígonos / Inmuebles</a>
+          <a href="#" data-audio="/audio/Tema4.mp3" data-title="Tema 4 · Sector público institucional">▶ Tema 4 · Sector público institucional</a>
+          <a href="#" data-audio="/audio/Tema5.mp3" data-title="Tema 5 · EBEP">▶ Tema 5 · EBEP</a>
+          <a href="#" data-audio="/audio/Tema6.mp3" data-title="Tema 6 · Estatuto Trabajadores">▶ Tema 6 · Estatuto Trabajadores</a>
+          <a href="#" data-audio="/audio/Tema7.mp3" data-title="Tema 7 · PRL">▶ Tema 7 · PRL</a>
+          <a href="#" data-audio="/audio/Tema8.mp3" data-title="Tema 8 · Igualdad">▶ Tema 8 · Igualdad</a>
+          <a href="#" data-audio="/audio/Tema9.mp3" data-title="Tema 9 · Seguridad vial">▶ Tema 9 · Seguridad vial</a>
         </div>
       </div>
 
