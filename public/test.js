@@ -1,37 +1,69 @@
-[
-  {
-    "id": "T1-0001",
-    "tema": 1,
-    "enunciado": "¿En qué año fue aprobada la Constitución Española vigente?",
-    "opciones": ["1975", "1978", "1981", "1992"],
-    "correcta": 1
-  },
-  {
-    "id": "T1-0002",
-    "tema": 1,
-    "enunciado": "¿Cuál es la forma política del Estado español según la Constitución?",
-    "opciones": ["República federal", "Monarquía parlamentaria", "Monarquía absoluta", "República unitaria"],
-    "correcta": 1
-  },
-  {
-    "id": "T1-0003",
-    "tema": 1,
-    "enunciado": "¿Qué poder del Estado aprueba las leyes en España?",
-    "opciones": ["El poder ejecutivo", "El poder legislativo", "El poder judicial", "El poder militar"],
-    "correcta": 1
-  },
-  {
-    "id": "T1-0004",
-    "tema": 1,
-    "enunciado": "¿Cuál de estos es un derecho fundamental reconocido en la Constitución?",
-    "opciones": ["Derecho a la vivienda como derecho fundamental", "Derecho a la vida", "Derecho a la huelga como deber", "Derecho a la propiedad como absoluto"],
-    "correcta": 1
-  },
-  {
-    "id": "T1-0005",
-    "tema": 1,
-    "enunciado": "¿Qué idioma es oficial del Estado según la Constitución?",
-    "opciones": ["Solo el gallego", "El castellano", "El euskera", "Todos los idiomas autonómicos"],
-    "correcta": 1
+async function cargarPreguntasCSV() {
+  const res = await fetch('/data/preguntas.csv', { cache: 'no-store' });
+  if (!res.ok) throw new Error('No se pudo cargar /data/preguntas.csv');
+
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+// CSV simple con comillas (sirve para nuestro caso)
+function parseCSV(csvText) {
+  const rows = [];
+  let row = [];
+  let cur = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < csvText.length; i++) {
+    const ch = csvText[i];
+    const next = csvText[i + 1];
+
+    if (ch === '"' && inQuotes && next === '"') { // escape ""
+      cur += '"';
+      i++;
+      continue;
+    }
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+
+    if (ch === ',' && !inQuotes) {
+      row.push(cur.trim());
+      cur = '';
+      continue;
+    }
+    if ((ch === '\n' || ch === '\r') && !inQuotes) {
+      if (ch === '\r' && next === '\n') i++;
+      row.push(cur.trim());
+      cur = '';
+      if (row.length > 1) rows.push(row);
+      row = [];
+      continue;
+    }
+    cur += ch;
   }
-]
+  if (cur.length || row.length) {
+    row.push(cur.trim());
+    if (row.length > 1) rows.push(row);
+  }
+
+  const header = rows.shift().map(h => h.replace(/^"|"$/g, ''));
+  return rows
+    .filter(r => r.some(v => v !== ''))
+    .map(r => {
+      const obj = {};
+      header.forEach((h, idx) => obj[h] = (r[idx] ?? '').replace(/^"|"$/g, ''));
+      obj.tema = Number(obj.tema);
+      return obj;
+    });
+}
+
+function filtrarPorTema(preguntas, tema) {
+  return preguntas.filter(p => p.tema === Number(tema));
+}
+
+// (opcional) si quieres validar rango T01-0001..T01-0200
+function filtrarRangoTema1(preguntas) {
+  return preguntas.filter(p => {
+    if (!p.id?.startsWith('T01-')) return false;
+    const n = Number(p.id.split('-')[1]);
+    return n >= 1 && n <= 200;
+  });
+}
