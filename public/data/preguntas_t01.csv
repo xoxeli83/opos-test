@@ -1,0 +1,201 @@
+id,tema,pregunta,a,b,c,d,correcta,ref
+T01-0001,1,¿En qué año fue aprobada la Constitución Española actualmente vigente?,1975,1978,1981,1992,B,CE 1978: fecha de aprobación
+T01-0002,1,"Según la Constitución, España se constituye en un Estado…",Federal,Social y democrático de Derecho,Confederal,Teocrático,B,CE 1978: Título Preliminar
+T01-0003,1,¿Quién es el Jefe del Estado según la Constitución?,El Presidente del Gobierno,El Rey,El Presidente del Congreso,El Presidente del Tribunal Constitucional,B,CE 1978: Corona
+T01-0004,1,"La soberanía nacional, según la Constitución, reside en…",El Rey,El Gobierno,El pueblo español,Las Cortes Generales,C,CE 1978: Título Preliminar
+T01-0005,1,¿Cuál es la forma política del Estado español?,República presidencialista,Monarquía parlamentaria,Monarquía absoluta,República parlamentaria,B,CE 1978: Corona
+T01-0006,1,Las Cortes Generales representan al…,Gobierno,Poder Judicial,Pueblo español,Consejo General del Poder Judicial,C,CE 1978: Cortes Generales
+T01-0007,1,¿Qué dos Cámaras integran las Cortes Generales?,Congreso y Consejo de Estado,Senado y Consejo General del Poder Judicial,Congreso de los Diputados y Senado,Congreso y Tribunal Constitucional,C,CE 1978: Cortes Generales
+T01-0008,1,La lengua oficial del Estado es…,El gallego,El castellano,El euskera,Todas las lenguas cooficiales,B,CE 1978: Título Preliminar
+T01-0009,1,La bandera de España está formada por…,Tres franjas verde-blanco-verde,Dos franjas rojas y una amarilla,Dos franjas amarillas y una roja,Blanco con un escudo central,B,CE 1978: símbolos
+T01-0010,1,La capital del Estado es…,Barcelona,Sevilla,Madrid,Valencia,C,CE 1978: organización territorial
+T01-0011,1,¿Cuál de los siguientes es un valor superior del ordenamiento jurídico?,La monarquía,La censura previa,La libertad,La pena de muerte,C,CE 1978: valores superiores
+T01-0012,1,La Constitución reconoce y garantiza el derecho a la autonomía de…,Las provincias,Las nacionalidades y regiones,Los municipios únicamente,Las comarcas,B,CE 1978: organización territorial
+T01-0013,1,El derecho a la vida y a la integridad física y moral se reconoce como…,Un principio rector,Un deber militar,Un derecho fundamental,Un derecho laboral,C,CE 1978: derechos fundamentales
+T01-0014,1,"La igualdad ante la ley, sin discriminación, se recoge como…",Derecho social,Derecho fundamental,Principio rector,Competencia autonómica,B,CE 1978: igualdad
+T01-0015,1,"La libertad ideológica, religiosa y de culto se reconoce como…",Derecho fundamental,Deber constitucional,Principio económico,Competencia exclusiva del Senado,A,CE 1978: libertades públicas
+T01-0016,1,¿Qué prohíbe la Constitución respecto a la pena de muerte?,La permite siempre,La prohíbe en todo caso,La permite para delitos militares en tiempos de guerra (según redacción clásica),La regula por ley orgánica,C,CE 1978: pena de muerte
+T01-0017,1,"El derecho al honor, a la intimidad personal y familiar y a la propia imagen es…",Derecho fundamental,Principio rector,Derecho económico,Derecho sindical,A,CE 1978: derechos fundamentales
+T01-0018,1,¿Cuál es el órgano que interpreta la Constitución en materia de constitucionalidad?,Tribunal Supremo,Tribunal Constitucional,Consejo de Estado,Audiencia Nacional,B,CE 1978: Tribunal Constitucional
+T01-0019,1,"El derecho a expresar y difundir libremente pensamientos, ideas y opiniones es…",Derecho fundamental,Principio rector,Derecho laboral,Deber militar,A,CE 1978: libertad de expresión
+T01-0020,1,¿Está permitida la censura previa según la Constitución?,"Sí, por razones morales","Sí, si lo ordena el Gobierno","No, está prohibida",Solo en medios digitales,C,CE 1978: libertad de expresión
+T01-0021,1,El derecho de reunión pacífica y sin armas es…,Un derecho económico,Un derecho fundamental,Un deber,Un principio rector,B,CE 1978: derecho de reunión
+T01-0022,1,El derecho de asociación es…,Derecho fundamental,Principio rector,Deber constitucional,Competencia municipal,A,CE 1978: derecho de asociación
+T01-0023,1,Los partidos políticos expresan el pluralismo político y son…,Órganos del poder judicial,Instrumento fundamental para la participación política,Entidades mercantiles públicas,Órganos consultivos,B,CE 1978: partidos políticos
+T01-0024,1,El derecho de participación en los asuntos públicos se ejerce…,Solo por referéndum,Directamente o por medio de representantes,Solo por representantes,Solo mediante iniciativa legislativa popular,B,CE 1978: participación
+T01-0025,1,El derecho a la tutela judicial efectiva implica…,Acceso a un juez sin indefensión,Obligación de litigar siempre,Censura de medios,Inmunidad absoluta,A,CE 1978: tutela judicial
+T01-0026,1,¿Qué garantiza el principio de legalidad penal?,Que solo el Gobierno decide penas,Que nadie puede ser condenado por acciones u omisiones que no constituyan delito según ley vigente,Que la pena se decide por referéndum,Que las penas son siempre de prisión,B,CE 1978: legalidad penal
+T01-0027,1,La detención preventiva tiene un límite máximo antes de pasar a disposición judicial de…,12 horas,24 horas,72 horas,7 días,C,CE 1978: detención
+T01-0028,1,El domicilio es…,Inviolable salvo consentimiento o resolución judicial (o flagrante delito),Registrable libremente por la policía,Registrable por el alcalde,Inviolable sin excepciones,A,CE 1978: inviolabilidad domicilio
+T01-0029,1,El secreto de las comunicaciones está garantizado…,Siempre y sin excepción,Salvo resolución judicial,Salvo decisión del Gobierno,Solo para cartas,B,CE 1978: comunicaciones
+T01-0030,1,El derecho a la educación reconoce…,La obligatoriedad de la enseñanza básica,La educación solo privada,La educación solo pública,La eliminación de la libertad de enseñanza,A,CE 1978: educación
+T01-0031,1,La libertad de enseñanza significa…,Solo enseñanza estatal,"Posibilidad de crear centros docentes, dentro del respeto a los principios constitucionales",Prohibición de centros privados,Censura de contenidos escolares,B,CE 1978: educación
+T01-0032,1,El derecho a sindicarse libremente es…,Principio rector,Derecho fundamental,Deber militar,Derecho económico,B,CE 1978: derechos sindicales
+T01-0033,1,El derecho de huelga se reconoce para…,Funcionarios exclusivamente,Trabajadores para la defensa de sus intereses,Empresarios,Cualquier persona sin límites,B,CE 1978: huelga
+T01-0034,1,La propiedad privada y la herencia son…,Derechos fundamentales absolutos,Derechos reconocidos con función social,Principios no reconocidos,Competencia autonómica exclusiva,B,CE 1978: propiedad
+T01-0035,1,La libertad de empresa se reconoce en el marco de…,Economía de mercado,Economía planificada,Economía de trueque,Economía autárquica,A,CE 1978: economía
+T01-0036,1,¿Qué regula la Constitución sobre la iniciativa legislativa popular?,Prohíbe cualquier iniciativa,La permite con requisitos y límites,Sustituye al Parlamento,Solo para presupuestos,B,CE 1978: participación legislativa
+T01-0037,1,Las leyes orgánicas se aprueban…,Por mayoría absoluta del Congreso en una votación final sobre el conjunto,Por mayoría simple del Senado,Por unanimidad del Gobierno,Por referéndum obligatorio siempre,A,CE 1978: leyes orgánicas
+T01-0038,1,La función ejecutiva y la potestad reglamentaria corresponden…,A las Cortes Generales,Al Gobierno,Al Tribunal Supremo,Al Rey en exclusiva,B,CE 1978: Gobierno
+T01-0039,1,El Presidente del Gobierno es nombrado por…,"El Rey, tras la confianza del Congreso",El Senado directamente,El Tribunal Constitucional,El Consejo de Estado,A,CE 1978: investidura
+T01-0040,1,El Gobierno responde políticamente ante…,El Rey,El Congreso de los Diputados,El Tribunal Supremo,La Unión Europea,B,CE 1978: responsabilidad del Gobierno
+T01-0041,1,El Consejo General del Poder Judicial es el órgano de gobierno del…,Gobierno,Poder Judicial,Parlamento,Tribunal Constitucional,B,CE 1978: CGPJ
+T01-0042,1,El Tribunal Supremo es…,El órgano consultivo superior,El órgano jurisdiccional superior en todos los órdenes salvo lo dispuesto en materia de garantías constitucionales,Un órgano legislativo,Un órgano autonómico,B,CE 1978: Tribunal Supremo
+T01-0043,1,Los jueces y magistrados son…,Dependientes del Gobierno,"Independientes, inamovibles, responsables y sometidos únicamente al imperio de la ley",Elegidos por sorteo anual,Nombrados por los ayuntamientos,B,CE 1978: Poder Judicial
+T01-0044,1,La Administración Pública sirve con objetividad los intereses generales y actúa con…,Arbitrariedad,Eficacia y sometimiento pleno a la ley y al Derecho,Secreto absoluto,Discrecionalidad sin control,B,CE 1978: Administración
+T01-0045,1,El Defensor del Pueblo es…,Un juez del Supremo,Alto comisionado de las Cortes para la defensa de los derechos,Un ministro,El jefe de la policía,B,CE 1978: Defensor del Pueblo
+T01-0046,1,El Tribunal de Cuentas es…,Órgano fiscalizador de cuentas y gestión económica del Estado y sector público,Órgano legislativo,Órgano judicial penal,Órgano municipal,A,CE 1978: Tribunal de Cuentas
+T01-0047,1,La reforma constitucional puede iniciarse…,Solo por el Rey,"Por el Gobierno, el Congreso, el Senado o las Asambleas de las CCAA",Solo por referéndum,Solo por el Tribunal Constitucional,B,CE 1978: reforma
+T01-0048,1,"La Constitución prevé estados de alarma, excepción y…",Guerra,Sitio,Emergencia municipal,Catástrofe autonómica,B,CE 1978: estados
+T01-0049,1,"La mayoría de edad en España, según la Constitución, es a los…",16 años,18 años,21 años,25 años,B,CE 1978: mayoría de edad
+T01-0050,1,Los españoles tienen el deber de…,Pertenecer a un partido,Contribuir al sostenimiento de los gastos públicos,Ser funcionarios,Votar obligatoriamente,B,CE 1978: deberes
+T01-0051,1,El sistema tributario se inspira en los principios de…,Legalidad y discrecionalidad,Igualdad y progresividad (y no confiscatoriedad),Arbitrariedad,Privilegios fiscales,B,CE 1978: Hacienda
+T01-0052,1,El derecho de petición se puede ejercer…,Solo colectivamente,"Individual y colectivamente, por escrito",Solo verbalmente,Solo ante el Rey,B,CE 1978: derecho de petición
+T01-0053,1,El derecho al trabajo se reconoce como…,Derecho fundamental,Principio rector/ derecho y deber,Competencia autonómica exclusiva,Derecho político,B,CE 1978: trabajo
+T01-0054,1,Las Fuerzas Armadas tienen como misión garantizar…,El ocio y turismo,"La soberanía e independencia de España, defender su integridad territorial y el ordenamiento constitucional",La política exterior,La censura informativa,B,CE 1978: Fuerzas Armadas
+T01-0055,1,Las Comunidades Autónomas se constituyen en…,Provincias,Entidades territoriales con autonomía,Entidades privadas,Órganos judiciales,B,CE 1978: organización territorial
+T01-0056,1,Los municipios gozan de…,Soberanía,Autonomía para la gestión de sus intereses,Independencia internacional,Competencia para dictar Constitución,B,CE 1978: entidades locales
+T01-0057,1,Las provincias son…,Órganos legislativos,Entidades locales con personalidad jurídica propia determinadas por la agrupación de municipios,Empresas públicas,Órganos judiciales,B,CE 1978: provincias
+T01-0058,1,La Constitución garantiza la publicidad de las normas y la…,Irretroactividad de disposiciones sancionadoras no favorables,Retroactividad total,Censura previa,Discriminación fiscal,A,CE 1978: principios
+T01-0059,1,La libertad de circulación y residencia se reconoce…,Solo para funcionarios,Para los españoles (y en términos legales para extranjeros),Solo en la UE,Solo dentro del municipio,B,CE 1978: circulación
+T01-0060,1,El derecho a contraer matrimonio se reconoce…,Solo para nacionales,Con plena igualdad jurídica,Solo con autorización del Gobierno,Solo con forma religiosa,B,CE 1978: matrimonio
+T01-0061,1,La protección de la salud se reconoce como…,Derecho fundamental,Principio rector que obliga a poderes públicos,Deber militar,Competencia exclusiva del Senado,B,CE 1978: salud
+T01-0062,1,El medio ambiente adecuado se reconoce como…,Principio rector y deber de conservarlo,Derecho fundamental absoluto,Competencia municipal exclusiva,Materia prohibida,A,CE 1978: medio ambiente
+T01-0063,1,El derecho a disfrutar de una vivienda digna se considera…,Derecho fundamental,Principio rector,Derecho penal,Derecho sindical,B,CE 1978: vivienda
+T01-0064,1,El servicio militar es…,Obligatorio siempre,Regulado por la ley (redacción clásica),Inexistente y prohibido,Decidido por municipios,B,CE 1978: defensa
+T01-0065,1,Las elecciones al Congreso y al Senado se celebran por…,Sufragio censitario,"Sufragio universal, libre, igual, directo y secreto (en los términos legales)",Sufragio indirecto del Rey,Sorteo,B,CE 1978: elecciones
+T01-0066,1,El mandato de los diputados y senadores es…,Imperativo,Libre (no están ligados por mandato imperativo),Controlado por el Gobierno,Decidido por el TC,B,CE 1978: Cortes
+T01-0067,1,Las sesiones del Pleno de las Cámaras son…,Secretas siempre,Públicas salvo acuerdo en contrario,Solo televisadas,Solo para diputados,B,CE 1978: Cortes
+T01-0068,1,Los tratados internacionales válidamente celebrados pasan a formar parte del ordenamiento interno…,Nunca,Una vez publicados oficialmente en España,Solo si lo decide el Gobierno sin publicación,Solo si lo aprueba el Senado por unanimidad,B,CE 1978: tratados
+T01-0069,1,El Rey sanciona y promulga las leyes…,Solo si quiere,En el plazo previsto y conforme a la Constitución,Por decisión del TC,No tiene esa función,B,CE 1978: funciones del Rey
+T01-0070,1,"El refrendo de los actos del Rey corresponde, según el caso, a…",El Tribunal Supremo,"El Presidente del Gobierno y, en su caso, los Ministros competentes",El Senado,El Defensor del Pueblo,B,CE 1978: refrendo
+T01-0071,1,La responsabilidad de los actos del Rey recae en…,El propio Rey,Quien los refrenda,El Congreso,El Tribunal Constitucional,B,CE 1978: refrendo
+T01-0072,1,El derecho a la libertad y seguridad implica que nadie puede ser privado de libertad sino…,Por decisión administrativa,Con observancia de lo establecido en la Constitución y la ley,Por decisión del alcalde,Por acuerdo vecinal,B,CE 1978: libertad
+T01-0073,1,El habeas corpus sirve para…,Aprobar leyes,Controlar la legalidad de la detención,Elegir al Presidente del Gobierno,Regular impuestos,B,CE 1978: habeas corpus
+T01-0074,1,La Constitución prohíbe la tortura y los…,Debates parlamentarios,Tratos inhumanos o degradantes,Impuestos,Partidos políticos,B,CE 1978: integridad
+T01-0075,1,La libertad de cátedra se relaciona con…,El derecho a la educación,El derecho a la propiedad,El derecho al trabajo,El derecho de petición,A,CE 1978: educación
+T01-0076,1,Los sindicatos y asociaciones empresariales contribuyen a…,Eliminar la negociación colectiva,La defensa y promoción de intereses económicos y sociales que les son propios,La censura de prensa,La función judicial,B,CE 1978: sindicatos
+T01-0077,1,La negociación colectiva laboral y la fuerza vinculante de los convenios se reconoce…,Como derecho constitucional,Como delito,Como prohibición,Como potestad del Rey,A,CE 1978: negociación colectiva
+T01-0078,1,El derecho a la propiedad limita su contenido por…,La voluntad del propietario,Su función social,El decreto del alcalde,La costumbre local,B,CE 1978: propiedad
+T01-0079,1,La expropiación forzosa requiere…,Solo acuerdo municipal,Causa justificada de utilidad pública o interés social y la correspondiente indemnización (según ley),Decisión del Rey sin ley,No existe en España,B,CE 1978: expropiación
+T01-0080,1,El derecho a la protección de datos (en términos modernos) se conecta con…,Honor e intimidad y límites al uso de la informática,Derecho de huelga,Derecho a la vivienda,Derecho a la educación,A,CE 1978: informática/datos
+T01-0081,1,La Constitución reconoce el derecho a…,Censurar informaciones,Comunicar o recibir libremente información veraz,Prohibir partidos,Imponer religión,B,CE 1978: información
+T01-0082,1,El derecho de reunión puede requerir comunicación previa…,Siempre prohibido,En los casos previstos por la ley,Solo con autorización del Rey,Nunca,B,CE 1978: reunión
+T01-0083,1,Las asociaciones pueden ser disueltas o suspendidas…,Por orden administrativa,Solo en virtud de resolución judicial motivada,Por decisión del Gobierno,Por decisión del Senado,B,CE 1978: asociación
+T01-0084,1,La Constitución reconoce la objeción de conciencia y otras causas de exención del servicio militar…,Por decreto municipal,En los términos que establezca la ley (redacción clásica),Por decisión del TC exclusivamente,No las reconoce,B,CE 1978: defensa/objeción
+T01-0085,1,El derecho de asilo en España se…,Prohíbe,Regula por la ley,Decide el Rey,Es competencia municipal,B,CE 1978: extranjeros/asilo
+T01-0086,1,Los extranjeros en España gozarán de las libertades públicas…,En los términos que establezcan los tratados y la ley,Siempre igual que nacionales sin ley,Nunca,Solo si son de la UE,A,CE 1978: extranjeros
+T01-0087,1,La Constitución garantiza el derecho a la seguridad social…,Como derecho fundamental,Como principio rector y sistema público,Como competencia municipal,No lo menciona,B,CE 1978: seguridad social
+T01-0088,1,La Constitución fomenta la participación de la juventud en…,Censura de prensa,"Desarrollo político, social, económico y cultural",Funciones judiciales,Refrendo del Rey,B,CE 1978: principios sociales
+T01-0089,1,El derecho a la cultura y a la ciencia se impulsa mediante…,Censura,Acción de los poderes públicos,Privilegios hereditarios,Monopolio estatal de publicaciones,B,CE 1978: cultura/ciencia
+T01-0090,1,La Constitución protege a la familia y a los…,Partidos,Hijos,Ministros,Sindicatos,B,CE 1978: familia
+T01-0091,1,Los poderes públicos aseguran la protección integral de los hijos…,Solo matrimoniales,Con independencia de su filiación,Solo adoptivos,Solo si son mayores de edad,B,CE 1978: familia
+T01-0092,1,La Constitución reconoce la igualdad jurídica en el matrimonio…,Solo para hombres,Para ambos cónyuges,Solo para españoles,No la reconoce,B,CE 1978: matrimonio
+T01-0093,1,El derecho a la libertad de empresa implica…,Prohibición de competencia,"Economía de mercado y defensa de la productividad, según la ley",Planificación total obligatoria,Monopolio estatal siempre,B,CE 1978: economía
+T01-0094,1,La planificación de la actividad económica general puede realizarse…,Sin ley,"Para atender a necesidades colectivas, equilibrar y armonizar el desarrollo regional y sectorial, según ley",Solo por municipios,Solo por la UE,B,CE 1978: economía
+T01-0095,1,La Constitución establece que nadie puede ser condenado o sancionado por acciones u omisiones que…,No sean populares,No constituyan delito o infracción administrativa según la ley vigente,No gusten al Gobierno,No estén en un reglamento municipal,B,CE 1978: legalidad
+T01-0096,1,La Constitución garantiza el principio de…,Inseguridad jurídica,Seguridad jurídica,Arbitrariedad,Censura,B,CE 1978: principios
+T01-0097,1,La Constitución prohíbe la arbitrariedad de…,Los jueces,Los poderes públicos,Los ciudadanos,Los sindicatos,B,CE 1978: principios
+T01-0098,1,El derecho a acceder en condiciones de igualdad a las funciones y cargos públicos es…,Derecho fundamental,Principio rector,Derecho laboral privado,No existe,A,CE 1978: acceso a funciones públicas
+T01-0099,1,"El derecho a la objeción de conciencia se vincula constitucionalmente, de forma clásica, a…",Educación,Servicio militar,Huelga,Propiedad,B,CE 1978: objeción
+T01-0100,1,El derecho a la inviolabilidad del domicilio protege…,Solo a empresas,El ámbito privado frente a entradas y registros sin consentimiento o autorización,Solo a cargos públicos,Solo a extranjeros,B,CE 1978: domicilio
+T01-0101,1,La libertad de residencia y circulación puede limitarse…,Sin ley,En los términos previstos por la ley,Solo por el alcalde,Nunca,B,CE 1978: circulación
+T01-0102,1,El derecho a la protección de la salud se desarrolla mediante…,El Sistema Nacional de Salud y la ley,La censura,La monarquía,Los sindicatos,A,CE 1978: salud
+T01-0103,1,La Constitución reconoce el derecho a una vivienda digna y adecuada y promueve…,La especulación,Condiciones necesarias y normas pertinentes,Prohibición de vivienda pública,Monopolio municipal,B,CE 1978: vivienda
+T01-0104,1,La Constitución reconoce el derecho a la protección de consumidores y usuarios mediante…,Censura,"Procedimientos eficaces, seguridad, salud e intereses económicos",Privilegios fiscales,Prohibición de asociaciones,B,CE 1978: consumidores
+T01-0105,1,El derecho de reunión se ejerce…,Con armas,Pacíficamente y sin armas,Solo en edificios públicos,Solo por asociaciones registradas,B,CE 1978: reunión
+T01-0106,1,La libertad de expresión incluye…,Censura previa,"Producción y creación literaria, artística, científica y técnica",Prohibición de críticas,Obligación de pertenecer a un medio,B,CE 1978: creación
+T01-0107,1,El derecho a comunicar información exige que sea…,Secreta,Veraz,Siempre favorable al Gobierno,Solo científica,B,CE 1978: información
+T01-0108,1,Los derechos fundamentales se tutelan preferentemente mediante…,Recurso de amparo (según condiciones) y procedimientos preferentes y sumarios,Solo por el Senado,Solo por el Gobierno,Solo por ayuntamientos,A,CE 1978: garantías
+T01-0109,1,El estado de alarma lo declara…,El Congreso,El Gobierno,El Rey sin Gobierno,El Tribunal Constitucional,B,CE 1978: estados
+T01-0110,1,El estado de excepción requiere…,Aprobación del Congreso,Aprobación del Senado,Decisión municipal,Decisión del TC,A,CE 1978: estados
+T01-0111,1,El estado de sitio lo declara…,El Gobierno,El Congreso de los Diputados,El Senado,El Rey,B,CE 1978: estados
+T01-0112,1,Las competencias entre Estado y CCAA se distribuyen…,Por capricho,Según Constitución y Estatutos de Autonomía,Por decisión del Rey,Por convenio colectivo,B,CE 1978: competencias
+T01-0113,1,La Constitución reconoce la solidaridad entre…,Municipios,Nacionalidades y regiones,Empresas,Sindicatos,B,CE 1978: organización territorial
+T01-0114,1,El derecho a la tutela judicial efectiva incluye…,Derecho a un juez predeterminado por la ley,Derecho a elegir juez,Derecho a evitar juicio siempre,Derecho a censura previa,A,CE 1978: garantías
+T01-0115,1,El principio de presunción de inocencia es…,Un deber militar,Un derecho fundamental,Un principio económico,Una competencia autonómica,B,CE 1978: garantías
+T01-0116,1,El derecho a no declarar contra sí mismo se vincula con…,Defensa y proceso con garantías,Educación,Propiedad,Huelga,A,CE 1978: proceso
+T01-0117,1,El derecho de defensa y asistencia letrada se reconoce…,Solo en civil,En el proceso con garantías,Solo en administrativo,No existe,B,CE 1978: proceso
+T01-0118,1,"La Constitución reconoce el derecho a la libertad sindical y el derecho de huelga, pero puede limitarse…",Sin ley,A fuerzas o institutos armados en los términos legales,Solo a profesores,Solo a empresas,B,CE 1978: sindicatos/huelga
+T01-0119,1,Los poderes públicos promoverán las condiciones para la libertad e igualdad sean…,Reales y efectivas,Solo teóricas,Solo económicas,Solo municipales,A,CE 1978: igualdad
+T01-0120,1,La Constitución garantiza el acceso de todos a la cultura…,Solo a nacionales,Promoviendo y tutelando,Prohibiéndolo,Solo por pago,B,CE 1978: cultura
+T01-0121,1,La iniciativa privada en actividad económica se reconoce…,Como delito,Como libertad de empresa,Como monopolio estatal,Como competencia del TC,B,CE 1978: economía
+T01-0122,1,El derecho de propiedad se limita por…,Función social,Voluntad del Gobierno sin ley,Decisión del Rey,Decisión de sindicatos,A,CE 1978: propiedad
+T01-0123,1,El principio de irretroactividad se aplica a…,Todas las leyes siempre,Disposiciones sancionadoras no favorables o restrictivas de derechos individuales,Normas fiscales favorables,Sentencias,B,CE 1978: principios
+T01-0124,1,La Constitución reconoce que los poderes públicos mantendrán un régimen público de seguridad social para…,Solo funcionarios,"Todos los ciudadanos, garantizando asistencia y prestaciones sociales suficientes",Solo empresarios,Solo extranjeros,B,CE 1978: seguridad social
+T01-0125,1,El derecho a la protección de la salud obliga a…,No hacer nada,Organizar y tutelar la salud pública mediante medidas preventivas y prestaciones,Privatizar siempre,Prohibir hospitales,B,CE 1978: salud
+T01-0126,1,¿Qué norma ocupa la posición suprema del ordenamiento jurídico español?,La Constitución,Un Real Decreto,Una Orden ministerial,Un reglamento municipal,A,Jerarquía normativa
+T01-0127,1,Las leyes y disposiciones normativas deben publicarse para su…,Secreto,Eficacia,Anulación automática,Aplicación retroactiva,B,Principio de publicidad
+T01-0128,1,¿Qué institución puede plantear un recurso de inconstitucionalidad? (según condiciones legales),Cualquier ciudadano sin requisitos,"Órganos legitimados (p.ej., Gobierno/Parlamentos)",Solo el Rey,Solo los alcaldes,B,Control de constitucionalidad
+T01-0129,1,¿Cuál de estos es un derecho fundamental?,Derecho a la vivienda,Derecho a la educación,Derecho a un medio ambiente adecuado,Derecho a la seguridad social,B,Derechos y libertades
+T01-0130,1,El derecho a la educación incluye el objetivo de…,Respetar los principios democráticos y derechos fundamentales,Eliminar la libertad de pensamiento,Imponer una religión,Suprimir la participación de padres,A,Educación
+T01-0131,1,¿Qué principio rige el acceso a la función pública?,Favoritismo,Mérito y capacidad (y legalidad),Herencia,Sorteo obligatorio,B,Función pública
+T01-0132,1,La Constitución establece que la Administración Pública actuará con…,Opacidad,"Descentralización, desconcentración y coordinación (según principios)",Impunidad,Arbitrariedad,B,Administración
+T01-0133,1,La Constitución prevé la responsabilidad patrimonial de la Administración por…,Daños causados por cualquier particular,"Lesión sufrida por particulares en sus bienes y derechos por funcionamiento de servicios públicos, según ley",Decisiones judiciales únicamente,Actos del Rey sin refrendo,B,Responsabilidad patrimonial
+T01-0134,1,El derecho a ser indemnizado por lesiones causadas por error judicial o funcionamiento anormal de la Administración de Justicia se reconoce…,"Sí, en los términos de la ley","No, nunca",Solo a funcionarios,Solo a empresas,A,Justicia
+T01-0135,1,El Ministerio Fiscal tiene por misión…,Dirigir el Parlamento,"Promover la acción de la justicia en defensa de la legalidad y del interés público, según ley",Sancionar leyes,Nombrar jueces,B,Poder Judicial
+T01-0136,1,La Constitución reconoce el derecho a un proceso público con…,Dilaciones indebidas y sin garantías,Todas las garantías,Censura previa,Sin juez,B,Garantías procesales
+T01-0137,1,¿Qué derecho protege la libertad de creación de medios de comunicación?,Derecho de asociación,Derecho a la libertad de expresión e información,Derecho a la vivienda,Derecho a la seguridad social,B,Medios
+T01-0138,1,"El secuestro de publicaciones, grabaciones y otros medios de información solo podrá acordarse…",Por decisión del Gobierno,En virtud de resolución judicial,Por el alcalde,Por el Senado,B,Garantías
+T01-0139,1,La Constitución reconoce el derecho a elegir libremente…,El juez,La residencia,La pena,La Constitución,B,Circulación/residencia
+T01-0140,1,La Constitución reconoce el derecho a la libertad de residencia y circulación en el territorio nacional…,Sin excepciones legales,En los términos que la ley establezca,Solo para mayores de 25,Solo para funcionarios,B,Circulación
+T01-0141,1,¿Cuál de los siguientes es un deber de los ciudadanos?,Derecho a huelga,Defender España (deber),Derecho de asociación,Derecho de petición,B,Deberes
+T01-0142,1,La Constitución establece que todos contribuirán al sostenimiento de los gastos públicos de acuerdo con…,La riqueza heredada,Su capacidad económica,Su ideología,Su localidad únicamente,B,Hacienda
+T01-0143,1,La Constitución prohíbe que el sistema tributario tenga alcance…,Progresivo,Confiscatorio,General,Justo,B,Hacienda
+T01-0144,1,"¿Cuál es el fundamento de la organización política y de la paz social, según la Constitución?",La propiedad privada,La dignidad de la persona y los derechos inviolables,La monarquía,La religión oficial,B,Dignidad/persona
+T01-0145,1,¿Existe religión oficial del Estado en la Constitución?,"Sí, la católica","Sí, la cristiana","No, ninguna",Solo en algunas CCAA,C,Libertad religiosa
+T01-0146,1,La Constitución reconoce la cooperación de los poderes públicos con…,Solo partidos,La Iglesia Católica y demás confesiones (según términos),Solo sindicatos,Solo empresas,B,Relaciones confesiones
+T01-0147,1,¿Qué garantiza la Constitución sobre la educación?,Prohíbe la enseñanza básica,Garantiza el derecho a la educación,Solo garantiza educación universitaria,Solo garantiza educación privada,B,Educación
+T01-0148,1,"La enseñanza básica, según la Constitución, es…",Voluntaria y de pago,Obligatoria y gratuita,Obligatoria y de pago,Voluntaria y gratuita,B,Educación
+T01-0149,1,¿Qué derecho se vincula a la elección de representantes mediante elecciones periódicas?,Derecho a huelga,Derecho de sufragio,Derecho de propiedad,Derecho a la vivienda,B,Participación política
+T01-0150,1,La Constitución reconoce el sufragio…,Restringido,Universal (según ley),Censitario,Corporativo,B,Sufragio
+T01-0151,1,¿Qué órgano aprueba los Presupuestos Generales del Estado?,El Tribunal Supremo,Las Cortes Generales,El Tribunal Constitucional,El Defensor del Pueblo,B,Cortes/Presupuestos
+T01-0152,1,La Constitución establece la unidad de la Nación española y reconoce…,La secesión automática,El derecho a la autonomía de nacionalidades y regiones,Solo la autonomía municipal,La abolición de CCAA,B,Organización territorial
+T01-0153,1,Las comunidades autónomas pueden asumir competencias mediante…,Constitución y Estatutos de Autonomía,Orden ministerial,Decisión del alcalde,Sentencia del TC sin ley,A,Competencias
+T01-0154,1,El principio de autonomía local implica que los ayuntamientos gestionan…,Solo impuestos estatales,Sus intereses,La defensa nacional,La política exterior,B,Entidades locales
+T01-0155,1,¿Qué órgano se considera consultivo del Gobierno?,Tribunal Supremo,Consejo de Estado,Tribunal Constitucional,Congreso,B,Órganos consultivos
+T01-0156,1,El Rey convoca y disuelve las Cortes Generales…,Sin límites,En los términos previstos en la Constitución,Solo si lo decide el Senado,Solo por petición ciudadana,B,Corona
+T01-0157,1,Las leyes se promulgan…,Por el Senado,"Por el Rey, sancionadas conforme a la Constitución",Por el Tribunal Constitucional,Por el Gobierno sin Cortes,B,Corona/Leyes
+T01-0158,1,La iniciativa para aprobar una ley puede corresponder a…,Solo al Gobierno,"Gobierno, Congreso, Senado y Asambleas autonómicas (según condiciones), e iniciativa popular con requisitos",Solo al Rey,Solo al Tribunal Supremo,B,Iniciativa legislativa
+T01-0159,1,¿Qué derecho protege la libertad de sindicación?,Derecho fundamental,Principio rector,Derecho económico,Deber,A,Sindicatos
+T01-0160,1,La Constitución reconoce el derecho de los trabajadores a la negociación colectiva…,No,Sí,Solo en sector público,Solo en sector privado con autorización del Gobierno,B,Negociación colectiva
+T01-0161,1,"La Constitución reconoce el derecho a la propiedad privada y a la herencia, pero su contenido se delimita por…",La costumbre,Su función social,La voluntad del Gobierno sin ley,Un referéndum anual,B,Propiedad
+T01-0162,1,¿Qué derecho se relaciona con la creación de colegios profesionales?,Derecho de reunión,Derecho de asociación (y regulación por ley),Derecho a la vivienda,Derecho a la salud,B,Asociación/colegios
+T01-0163,1,La Constitución garantiza la libertad de creación de…,Partidos judiciales,Centros docentes,Impuestos,Fuerzas armadas privadas,B,Educación
+T01-0164,1,Los poderes públicos promoverán el bienestar de los ciudadanos durante la tercera edad mediante…,Censura,Pensiones adecuadas y servicios sociales,Monopolio estatal,Privilegios hereditarios,B,Principios sociales
+T01-0165,1,La Constitución reconoce la protección de las personas con discapacidad mediante…,Prohibición de apoyo,"Políticas de previsión, tratamiento, rehabilitación e integración (según redacción)",Eliminación de accesibilidad,Solo ayudas privadas,B,Principios sociales
+T01-0166,1,La Constitución promueve la participación de los interesados en la Seguridad Social y en la actividad de los organismos…,Nunca,En la forma que la ley establezca,Solo por referéndum,Solo por el Rey,B,Participación social
+T01-0167,1,El derecho a la libertad de empresa se reconoce…,Solo para empresas públicas,En el marco de la economía de mercado,Solo para cooperativas,Solo para multinacionales,B,Economía
+T01-0168,1,El derecho a un medio ambiente adecuado conlleva el deber de…,Contaminar,Conservarlo,Privatizarlo,Ignorarlo,B,Medio ambiente
+T01-0169,1,"La Constitución dispone que la riqueza del país, en sus distintas formas…",Pertenece al Rey,Está subordinada al interés general,No tiene función social,Solo es privada,B,Economía/interés general
+T01-0170,1,"La Constitución garantiza la defensa de consumidores y usuarios, protegiendo su…",Derecho a censurar,"Seguridad, salud e intereses económicos",Derecho a indulto automático,Derecho a huelga,B,Consumidores
+T01-0171,1,La Constitución reconoce el derecho a la cultura y a la investigación científica y técnica como…,Prohibición,Principio rector impulsado por los poderes públicos,Derecho penal,Deber militar,B,Cultura/ciencia
+T01-0172,1,La Constitución establece que la justicia emana del pueblo y se administra en nombre del Rey por…,El Gobierno,Jueces y magistrados integrantes del poder judicial,Las Cortes,El Tribunal de Cuentas,B,Justicia
+T01-0173,1,La Constitución exige que las sentencias sean…,Secretas,Motivadas y se pronuncien en audiencia pública (según ley),Dictadas por el Gobierno,Aprobadas por el Senado,B,Justicia
+T01-0174,1,"La Constitución reconoce el derecho a la libertad personal y seguridad, y la detención debe practicarse…",Sin información de derechos,Informando de forma inmediata y comprensible de los motivos y derechos,Solo con presencia del alcalde,Solo por el Rey,B,Detención
+T01-0175,1,La Constitución reconoce el derecho a la integridad física y moral y prohíbe…,La huelga,La tortura,La educación,La propiedad,B,Integridad
+T01-0176,1,"La Constitución reconoce el derecho a la libertad y seguridad, y que la prisión provisional…",Es automática,Debe ser excepcional y conforme a ley (principio general),Es obligatoria,No existe,B,Garantías
+T01-0177,1,La Constitución reconoce el derecho a acceder a archivos y registros administrativos…,Sin límites,"En los términos que la ley establezca, con límites por seguridad/defensa/investigación/intimidad",Solo para funcionarios,Nunca,B,Transparencia/archivos
+T01-0178,1,La Constitución reconoce el derecho de los ciudadanos a participar en la Administración de Justicia mediante…,Jurado (según ley),Voto al juez,Censura previa,Huelga,A,Jurado
+T01-0179,1,El derecho a la libertad de expresión incluye la libertad de…,Censura previa,Producción y creación artística,Prohibir críticas,Imponer una ideología,B,Expresión
+T01-0180,1,La Constitución reconoce que la ley regulará el derecho a la objeción de conciencia…,Para educación,Para el servicio militar (redacción clásica),Para vivienda,Para impuestos,B,Objeción
+T01-0181,1,La Constitución establece que nadie puede ser obligado a declarar sobre su…,Renta,"Ideología, religión o creencias",Altura,Lugar de nacimiento,B,Libertad ideológica
+T01-0182,1,La Constitución garantiza la libertad de información y el secreto profesional…,De cualquier trabajador,De los periodistas (según ley),Del Rey,De los jueces,B,Información/secreto profesional
+T01-0183,1,La Constitución reconoce la libertad de creación de asociaciones y establece que las asociaciones secretas y paramilitares…,Son obligatorias,Están prohibidas,Son recomendables,Son competencia municipal,B,Asociación
+T01-0184,1,El derecho a la reunión puede limitarse…,Sin ley,"Por razones de orden público con peligro para personas o bienes, en los términos legales",Por gusto del Gobierno,Nunca,B,Reunión/orden público
+T01-0185,1,La Constitución reconoce el derecho de los españoles a entrar y salir libremente de España…,Sin límites legales,En los términos que la ley establezca,Solo con visado,Solo por estudio,B,Circulación
+T01-0186,1,La Constitución reconoce la inviolabilidad de las Cortes Generales en el ejercicio de sus funciones mediante…,Responsabilidad penal automática,Inviolabilidad y/o inmunidades parlamentarias (según términos),Censura de prensa,Competencia del TC,B,Cortes: garantías
+T01-0187,1,La Constitución reconoce la igualdad ante la ley y prohíbe discriminación por razón de…,"Nacimiento, raza, sexo, religión, opinión u otra condición o circunstancia personal o social",Altura exclusivamente,Profesión exclusivamente,Municipio,A,Igualdad
+T01-0188,1,La Constitución reconoce el derecho a la protección de la salud y que la ley establecerá los derechos y deberes de…,Los consumidores,Todos al respecto,Solo médicos,Solo funcionarios,B,Salud
+T01-0189,1,La Constitución reconoce el derecho de los ciudadanos a la educación y que los poderes públicos garantizarán…,La censura previa,La inspección y homologación del sistema educativo,La eliminación de centros,La privatización obligatoria,B,Educación
+T01-0190,1,La Constitución reconoce el derecho a la vivienda digna y que los poderes públicos regularán…,La especulación de suelo,La utilización del suelo de acuerdo con el interés general,El monopolio privado,La abolición de urbanismo,B,Vivienda/suelo
+T01-0191,1,"La Constitución reconoce la protección de la juventud y la infancia, y la obligación de los poderes públicos de…",Imponer trabajo infantil,"Asegurar su protección social, económica y jurídica",Eliminar educación,Prohibir ocio,B,Protección menores
+T01-0192,1,La Constitución reconoce el derecho al trabajo y a una remuneración…,Inferior al mínimo,Suficiente para satisfacer necesidades,Solo en especie,Solo si lo decide el Senado,B,Trabajo
+T01-0193,1,La Constitución reconoce el derecho de todos a disfrutar del deporte…,No lo reconoce,Y obliga a los poderes públicos a fomentarlo,Solo para federados,Solo para menores,B,Deporte/ocio
+T01-0194,1,"¿Qué órgano dirige la política interior y exterior, la Administración civil y militar y la defensa del Estado?",El Congreso,El Gobierno,El Tribunal Constitucional,El Senado,B,Gobierno
+T01-0195,1,"La Constitución establece que las Cortes Generales ejercen la potestad legislativa del Estado, aprueban sus presupuestos y…",Controlan la acción del Gobierno,Nombran a todos los jueces,Dirigen la policía,Aprueban sentencias,A,Cortes
+T01-0196,1,"La Constitución reconoce la libertad de expresión e información, pero limita estos derechos por el respeto a…",La censura previa,"Los derechos al honor, intimidad, propia imagen y protección de la juventud y la infancia",La riqueza,La autonomía municipal,B,Límites derechos
+T01-0197,1,El derecho de sindicación puede limitarse o exceptuarse…,Sin ley,Para fuerzas o institutos armados u otros cuerpos en los términos legales,Para estudiantes,Para jubilados,B,Sindicatos
+T01-0198,1,"Según la Constitución, el Rey arbitra y modera el funcionamiento regular de…",Las empresas,Las instituciones,Los sindicatos,Los municipios,B,Corona
+T01-0199,1,La Constitución establece que el ejercicio de los derechos y libertades debe hacerse conforme a…,La Constitución y las leyes,La costumbre local,La voluntad del Gobierno sin ley,El criterio del alcalde,A,Garantías
+T01-0200,1,El derecho a la tutela judicial efectiva incluye el derecho a…,La indefensión,No padecer indefensión,Elegir el tribunal,Evitar cualquier sanción,B,Tutela judicial
