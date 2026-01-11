@@ -192,4 +192,15 @@
 .rev.ok{ border-color: rgba(60,255,180,.35); }
 .rev.bad{ border-color: rgba(255,120,120,.35); }
 .rev.blank{ border-color: rgba(255,255,255,.15); }
+/* Coloreado de respuestas en test por tema */
+.opt.is-correct{
+  background: rgba(60,255,180,.20) !important;
+  border-color: rgba(60,255,180,.55) !important;
+  color: #fff !important;
+}
+.opt.is-wrong{
+  background: rgba(255,120,120,.20) !important;
+  border-color: rgba(255,120,120,.55) !important;
+  color: #fff !important;
+}
 
