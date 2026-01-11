@@ -168,7 +168,7 @@ body{
 /* ZFV button */
 .zf-btn{
   font-size:12px;
-  padding:4px 28px;
+  padding:4px 8px;
   border-radius:8px;
   border:1px solid rgba(0,207,255,.35);
   background:rgba(0,207,255,.12);
