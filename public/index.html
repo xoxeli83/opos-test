@@ -21,18 +21,7 @@
           <div class="menu">
             <a href="/pdf/Tema1.pdf" target="_blank" rel="noreferrer">1. Constitución <small>PDF</small></a>
             <a href="/pdf/Tema2.pdf" target="_blank" rel="noreferrer">2. Zona Franca <small>PDF</small></a>
-
-            <!-- TEMA 3: PDF + botón ZFV -->
-            <div class="menu-row">
-              <a href="/pdf/Tema3.pdf" target="_blank" rel="noreferrer">
-                3. Polígonos / Inmuebles <small>PDF</small>
-              </a>
-              <a href="https://www.zfv.es/portal/infraestructuras/parques-empresariales.html"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 class="zf-btn">ZFV</a>
-            </div>
-
+            <a href="/pdf/Tema3.pdf" target="_blank" rel="noreferrer">3. Polígonos / Inmuebles <small>PDF</small></a>
             <a href="/pdf/Tema4.pdf" target="_blank" rel="noreferrer">4. Sector público institucional <small>PDF</small></a>
             <a href="/pdf/Tema5.pdf" target="_blank" rel="noreferrer">5. EBEP <small>PDF</small></a>
             <a href="/pdf/Tema6.pdf" target="_blank" rel="noreferrer">6. Estatuto Trabajadores <small>PDF</small></a>
@@ -61,6 +50,22 @@
     </div>
   </header>
 
+  <!-- Barra reproductor fija -->
+  <div class="audio-bar hidden" id="audioBar">
+    <div class="audio-left">
+      <strong id="audioTitle">Audio</strong>
+      <span class="audio-meta" id="audioTime">00:00 / 00:00</span>
+    </div>
+
+    <div class="audio-controls">
+      <button class="audio-btn" id="audioPlay">▶</button>
+      <input type="range" id="audioSeek" min="0" max="100" value="0" step="0.1" />
+      <button class="audio-btn ghost" id="audioClose">✕</button>
+    </div>
+
+    <audio id="audioEl" preload="metadata"></audio>
+  </div>
+
   <main class="wrap">
     <section class="hero">
       <h1>Preparación de oposiciones</h1>
@@ -68,20 +73,24 @@
     </section>
 
     <section class="grid">
-      <div class="card">
+
+      <!-- TEMARIO -->
+      <div class="card" id="temario">
         <h2>📘 Temario</h2>
         <p>Consulta cada tema.</p>
+
         <div class="list">
           <a href="/pdf/Tema1.pdf" target="_blank" rel="noreferrer">Tema 1 · Constitución</a>
-          <a href="/pdf/Tema2.pdf" target="_blank" rel="noreferrer">Tema 2 · Zona Franca</a>
 
-          <!-- TEMA 3: PDF + botón ZFV -->
-          <div class="list-row">
-            <a href="/pdf/Tema3.pdf" target="_blank" rel="noreferrer">Tema 3 · Polígonos / Inmuebles</a>
-            <a href="https://www.zfv.es/portal/infraestructuras/parques-empresariales.html"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="zf-btn">ZFV</a>
+          <a href="/pdf/Tema2.pdf" target="_blank" rel="noreferrer">
+            Tema 2 · Zona Franca
+          </a>
+
+          <div class="rowlink">
+            <a class="rowlink-main" href="/pdf/Tema3.pdf" target="_blank" rel="noreferrer">
+              Tema 3 · Polígonos / Inmuebles
+            </a>
+            <a class="zf-btn" href="https://www.zfv.es/portal/infraestructuras/parques-empresariales.html" target="_blank" rel="noreferrer">ZFV</a>
           </div>
 
           <a href="/pdf/Tema4.pdf" target="_blank" rel="noreferrer">Tema 4 · Sector público institucional</a>
@@ -93,9 +102,11 @@
         </div>
       </div>
 
-      <div class="card">
+      <!-- TESTS -->
+      <div class="card" id="tests">
         <h2>📝 Tests</h2>
-        <p>Por ahora los enlaces quedan preparados (la página de test la haremos después).</p>
+        <p>Tests por tema y simulacro general.</p>
+
         <div class="list">
           <a href="/test.html?tema=1">Test Tema 1</a>
           <a href="/test.html?tema=2">Test Tema 2</a>
@@ -109,6 +120,25 @@
           <a href="/test.html?general=1" class="highlight">🎯 Test General (65 preguntas)</a>
         </div>
       </div>
+
+      <!-- AUDIOS -->
+      <div class="card" id="audios">
+        <h2>🎧 Audios resumen</h2>
+        <p>Escucha resúmenes por tema.</p>
+
+        <div class="list">
+          <a href="#" data-audio="/audio/Tema1.mp3" data-title="Tema 1 · Constitución">▶ Tema 1 · Constitución</a>
+          <a href="#" data-audio="/audio/Tema2.mp3" data-title="Tema 2 · Zona Franca">▶ Tema 2 · Zona Franca</a>
+          <a href="#" data-audio="/audio/Tema3.mp3" data-title="Tema 3 · Polígonos / Inmuebles">▶ Tema 3 · Polígonos / Inmuebles</a>
+          <a href="#" data-audio="/audio/Tema4.mp3" data-title="Tema 4 · Sector público institucional">▶ Tema 4 · Sector público institucional</a>
+          <a href="#" data-audio="/audio/Tema5.mp3" data-title="Tema 5 · EBEP">▶ Tema 5 · EBEP</a>
+          <a href="#" data-audio="/audio/Tema6.mp3" data-title="Tema 6 · Estatuto Trabajadores">▶ Tema 6 · Estatuto Trabajadores</a>
+          <a href="#" data-audio="/audio/Tema7.mp3" data-title="Tema 7 · PRL">▶ Tema 7 · PRL</a>
+          <a href="#" data-audio="/audio/Tema8.mp3" data-title="Tema 8 · Igualdad">▶ Tema 8 · Igualdad</a>
+          <a href="#" data-audio="/audio/Tema9.mp3" data-title="Tema 9 · Seguridad vial">▶ Tema 9 · Seguridad vial</a>
+        </div>
+      </div>
+
     </section>
   </main>
 
