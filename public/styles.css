@@ -167,7 +167,7 @@ body{
 
 /* ZFV button */
 .zf-btn{
-  min-width: 64px;          /* MÁS ANCHO */
+  min-width: 80px;          /* MÁS ANCHO */
   text-align: center;       /* centra el texto */
   padding: 6px 0px;        /* un poco más alto y ancho */
   border-radius: 10px;      /* más “botón” */
