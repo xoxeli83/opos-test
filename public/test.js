@@ -67,3 +67,36 @@ function filtrarRangoTema1(preguntas) {
     return n >= 1 && n <= 200;
   });
 }
+function shuffle(array) {
+  const a = array.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function prepararPreguntaParaMostrar(p) {
+  // p: objeto del CSV con a,b,c,d y correcta (A/B/C/D)
+  const opciones = [
+    { key: 'A', text: p.a },
+    { key: 'B', text: p.b },
+    { key: 'C', text: p.c },
+    { key: 'D', text: p.d },
+  ];
+
+  const mezcladas = shuffle(opciones);
+
+  const correctaOriginal = String(p.correcta || '').trim().toUpperCase();
+  const correctaMezcladaIndex = mezcladas.findIndex(o => o.key === correctaOriginal);
+
+  // Devolvemos una estructura lista para pintar
+  return {
+    id: p.id,
+    tema: p.tema,
+    pregunta: p.pregunta,
+    ref: p.ref,
+    opciones: mezcladas.map(o => o.text), // array de 4 textos en orden aleatorio
+    correctaIndex: correctaMezcladaIndex, // 0..3 (posición correcta tras mezclar)
+  };
+}
