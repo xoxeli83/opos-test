@@ -1,96 +1,99 @@
-// ========================
-// Config
-// ========================
-const EXAM_DUR_MIN = 80;
-const EXAM_N = 65;
-const PRACTICE_N = 20; // nº preguntas por test de tema (ajústalo)
-const EXAM_SCORE_OK = 30;
+/* =========================
+   Opos Test — test.js
+   - Tests por tema: preguntas aleatorias SIN repetirse + feedback inmediato (sin penalización)
+   - Test general (65): mezcla de temas + penalización -0,25 + cronómetro 80 min
+   - Selección se guarda en sessionStorage para que NO cambie al refrescar
+   - CSV por tema: /data/preguntas_t01.csv, /data/preguntas_t02.csv, ...
+   ========================= */
 
-// ========================
-// Helpers URL / CSV
-// ========================
-function getModoDesdeURL() {
+/* ---------- CONFIG ---------- */
+const CONFIG = {
+  // nº preguntas por test de tema (puedes cambiarlo)
+  temaCountDefault: 20,
+
+  // test general
+  generalCount: 65,
+  generalTimeSeconds: 80 * 60,
+  generalPenalty: 0.25,
+  generalPassScore: 30,
+
+  // reparto por tema en el general (se ajusta si no hay suficientes)
+  // Si quieres otro reparto, cámbialo aquí.
+  generalDistribution: { 1: 10, 2: 6, 3: 8, 4: 8, 5: 8, 6: 8, 7: 6, 8: 6, 9: 5 },
+
+  // rutas csv por tema (t01..t09)
+  csvPathByTema: (temaNum) => `/data/preguntas_t${String(temaNum).padStart(2, '0')}.csv`,
+};
+
+/* ---------- DOM ---------- */
+const $ = (id) => document.getElementById(id);
+
+const els = {
+  testTitle: $('testTitle'),
+  testRules: $('testRules'),
+  timeLeft: $('timeLeft'),
+
+  idxNow: $('idxNow'),
+  idxTotal: $('idxTotal'),
+  answeredCount: $('answeredCount'),
+  navGrid: $('navGrid'),
+
+  qBadge: $('qBadge'),
+  qMeta: $('qMeta'),
+  qText: $('qText'),
+  options: $('options'),
+
+  btnPrev: $('btnPrev'),
+  btnNext: $('btnNext'),
+  btnFinish: $('btnFinish'),
+  btnReset: $('btnReset'),
+
+  resultBox: $('resultBox'),
+  rOk: $('rOk'),
+  rBad: $('rBad'),
+  rBlank: $('rBlank'),
+  rScore: $('rScore'),
+  passLine: $('passLine'),
+  btnDownload: $('btnDownload'),
+  review: $('review'),
+};
+
+/* ---------- STATE ---------- */
+let MODE = 'tema'; // 'tema' | 'general'
+let TEMA = null;   // 1..9 si MODE=tema
+let QUESTIONS = []; // preguntas ya "preparadas" (opciones mezcladas y correctaIndex calculado)
+let currentIndex = 0;
+
+// respuestas del usuario: { [idx]: selectedIndex (0..3) o null }
+let answers = [];
+// bloqueado: en test de tema, cuando eliges una opción se bloquea la pregunta (feedback inmediato)
+let locked = [];
+
+// timer solo general
+let timer = null;
+let secondsLeft = 0;
+
+/* =========================
+   UTILIDADES
+   ========================= */
+
+function getQuery() {
   const params = new URLSearchParams(location.search);
-  const tema = params.get("tema");
-  const general = params.get("general");
-
-  if (general === "1") return { modo: "exam", tema: null };
-  if (tema) return { modo: "practice", tema: Number(tema) };
-  return { modo: "practice", tema: 1 };
+  const tema = params.get('tema');
+  const general = params.get('general');
+  return { tema: tema ? Number(tema) : null, general: general === '1' };
 }
 
-function temaToRutaCSV(temaNumero) {
-  const t = String(temaNumero).padStart(2, "0");
-  return `/data/preguntas_t${t}.csv`;
+function sessionKey() {
+  // clave única por modo + tema
+  if (MODE === 'general') return `opostest_selection_general_v1`;
+  return `opostest_selection_tema_${String(TEMA).padStart(2, '0')}_v1`;
 }
 
-async function cargarPreguntasCSVDesdeRuta(ruta) {
-  const res = await fetch(ruta, { cache: "no-store" });
-  if (!res.ok) throw new Error(`No se pudo cargar ${ruta}`);
-  const text = await res.text();
-  return parseCSV(text);
+function safeJSONParse(s) {
+  try { return JSON.parse(s); } catch { return null; }
 }
 
-// CSV con comillas (sirve para nuestro caso)
-function parseCSV(csvText) {
-  const rows = [];
-  let row = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < csvText.length; i++) {
-    const ch = csvText[i];
-    const next = csvText[i + 1];
-
-    if (ch === '"' && inQuotes && next === '"') {
-      cur += '"';
-      i++;
-      continue;
-    }
-    if (ch === '"') {
-      inQuotes = !inQuotes;
-      continue;
-    }
-
-    if (ch === "," && !inQuotes) {
-      row.push(cur);
-      cur = "";
-      continue;
-    }
-    if ((ch === "\n" || ch === "\r") && !inQuotes) {
-      if (ch === "\r" && next === "\n") i++;
-      row.push(cur);
-      cur = "";
-      if (row.length > 1) rows.push(row);
-      row = [];
-      continue;
-    }
-    cur += ch;
-  }
-
-  if (cur.length || row.length) {
-    row.push(cur);
-    if (row.length > 1) rows.push(row);
-  }
-
-  const header = rows.shift().map((h) => h.trim().replace(/^"|"$/g, ""));
-  return rows
-    .filter((r) => r.some((v) => String(v).trim() !== ""))
-    .map((r) => {
-      const obj = {};
-      header.forEach((h, idx) => {
-        const v = (r[idx] ?? "").trim().replace(/^"|"$/g, "");
-        obj[h] = v;
-      });
-      obj.tema = Number(obj.tema);
-      obj.correcta = String(obj.correcta || "").trim().toUpperCase(); // A/B/C/D
-      return obj;
-    });
-}
-
-// ========================
-// Shuffle + preparar pregunta (mezcla respuestas)
-// ========================
 function shuffle(array) {
   const a = array.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -100,473 +103,624 @@ function shuffle(array) {
   return a;
 }
 
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+/* =========================
+   CSV LOADER
+   ========================= */
+
+async function cargarPreguntasCSV(path) {
+  const res = await fetch(path, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`No se pudo cargar ${path}`);
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+// CSV simple con comillas
+function parseCSV(csvText) {
+  const rows = [];
+  let row = [];
+  let cur = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < csvText.length; i++) {
+    const ch = csvText[i];
+    const next = csvText[i + 1];
+
+    if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+
+    if (ch === ',' && !inQuotes) {
+      row.push(cur.trim());
+      cur = '';
+      continue;
+    }
+    if ((ch === '\n' || ch === '\r') && !inQuotes) {
+      if (ch === '\r' && next === '\n') i++;
+      row.push(cur.trim());
+      cur = '';
+      if (row.length > 1) rows.push(row);
+      row = [];
+      continue;
+    }
+    cur += ch;
+  }
+  if (cur.length || row.length) {
+    row.push(cur.trim());
+    if (row.length > 1) rows.push(row);
+  }
+
+  const header = (rows.shift() || []).map(h => h.replace(/^"|"$/g, ''));
+  return rows
+    .filter(r => r.some(v => v !== ''))
+    .map(r => {
+      const obj = {};
+      header.forEach((h, idx) => obj[h] = (r[idx] ?? '').replace(/^"|"$/g, ''));
+      obj.tema = Number(obj.tema);
+      obj.correcta = String(obj.correcta || '').trim().toUpperCase(); // A/B/C/D
+      return obj;
+    });
+}
+
+/* =========================
+   PREPARAR PREGUNTA
+   - Mezcla opciones y calcula correctaIndex
+   ========================= */
+
 function prepararPreguntaParaMostrar(p) {
   const opciones = [
-    { key: "A", text: p.a },
-    { key: "B", text: p.b },
-    { key: "C", text: p.c },
-    { key: "D", text: p.d },
+    { key: 'A', text: p.a },
+    { key: 'B', text: p.b },
+    { key: 'C', text: p.c },
+    { key: 'D', text: p.d },
   ];
 
   const mezcladas = shuffle(opciones);
 
-  const correctaOriginal = String(p.correcta || "").trim().toUpperCase();
-  const correctaIndex = mezcladas.findIndex((o) => o.key === correctaOriginal);
+  const correctaOriginal = String(p.correcta || '').trim().toUpperCase();
+  const correctaMezcladaIndex = mezcladas.findIndex(o => o.key === correctaOriginal);
 
   return {
     id: p.id,
     tema: p.tema,
     pregunta: p.pregunta,
-    ref: p.ref || "",
-    opciones: mezcladas.map((o) => o.text),
-    correctaIndex: correctaIndex >= 0 ? correctaIndex : 0,
+    ref: p.ref || '',
+    opciones: mezcladas.map(o => o.text),
+    correctaIndex: correctaMezcladaIndex, // 0..3
   };
 }
 
-function seleccionarN(preguntas, n) {
-  if (preguntas.length <= n) return shuffle(preguntas);
-  return shuffle(preguntas).slice(0, n);
+/* =========================
+   SELECCIÓN ALEATORIA SIN REPETIR
+   + Persistencia (sessionStorage)
+   ========================= */
+
+function guardarSeleccionEnSession(data) {
+  sessionStorage.setItem(sessionKey(), JSON.stringify(data));
+}
+
+function cargarSeleccionDeSession() {
+  return safeJSONParse(sessionStorage.getItem(sessionKey()));
+}
+
+function limpiarSessionSeleccion() {
+  sessionStorage.removeItem(sessionKey());
+}
+
+function buildSelectionTema(preguntasTema, count) {
+  const seleccion = shuffle(preguntasTema).slice(0, Math.min(count, preguntasTema.length));
+  return {
+    mode: 'tema',
+    tema: TEMA,
+    ids: seleccion.map(p => p.id),
+    // guardamos un "seedless snapshot" para mantener el orden del test
+    // (solo ids en orden; las opciones se mezclarán por pregunta, pero se mantiene el orden de preguntas)
+  };
+}
+
+function buildSelectionGeneral(allByTema, distribution) {
+  // allByTema: { [temaNum]: preguntas[] }
+  // distribution: { [temaNum]: count }
+  const temas = Object.keys(distribution).map(Number);
+
+  const picked = [];
+  for (const t of temas) {
+    const wanted = distribution[t] || 0;
+    const list = allByTema[t] || [];
+    const sel = shuffle(list).slice(0, Math.min(wanted, list.length));
+    picked.push(...sel);
+  }
+
+  // Si faltan para llegar a 65, rellenamos con pool total (sin repetir)
+  const needed = CONFIG.generalCount - picked.length;
+  if (needed > 0) {
+    const pickedIds = new Set(picked.map(p => p.id));
+    const pool = [];
+    for (const t of temas) {
+      for (const p of (allByTema[t] || [])) {
+        if (!pickedIds.has(p.id)) pool.push(p);
+      }
+    }
+    const fill = shuffle(pool).slice(0, Math.min(needed, pool.length));
+    picked.push(...fill);
+  }
+
+  // Si sobran (por ajustes raros), cortamos
+  const final = shuffle(picked).slice(0, CONFIG.generalCount);
+
+  return {
+    mode: 'general',
+    ids: final.map(p => p.id),
+  };
+}
+
+function aplicarSeleccion(preguntasCargadas, selection) {
+  // preguntasCargadas: array de preguntas crudas del/los csv
+  // selection.ids: orden definitivo
+  const map = new Map(preguntasCargadas.map(p => [p.id, p]));
+  const ordered = selection.ids.map(id => map.get(id)).filter(Boolean);
+  return ordered;
+}
+
+/* =========================
+   UI / RENDER
+   ========================= */
+
+function setModeUI() {
+  if (MODE === 'general') {
+    els.testTitle.textContent = 'Test';
+    els.testRules.textContent = '80 min · 4 opciones · +1 acierto · −0,25 fallo · 0 blanco · APTO ≥ 30';
+    secondsLeft = CONFIG.generalTimeSeconds;
+    els.timeLeft.textContent = formatTime(secondsLeft);
+    startTimer();
+  } else {
+    els.testTitle.textContent = `Test Tema ${TEMA}`;
+    els.testRules.textContent = '4 opciones · feedback inmediato · sin penalización';
+    // en tests por tema no usamos timer
+    stopTimer();
+    els.timeLeft.textContent = '—';
+  }
+}
+
+function renderNavGrid() {
+  els.navGrid.innerHTML = '';
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mini';
+    b.textContent = String(i + 1);
+    b.addEventListener('click', () => goTo(i));
+    els.navGrid.appendChild(b);
+  }
+  updateProgressUI();
+}
+
+function updateProgressUI() {
+  els.idxNow.textContent = String(currentIndex + 1);
+  els.idxTotal.textContent = String(QUESTIONS.length);
+
+  const answered = answers.filter(v => v !== null && v !== undefined).length;
+  els.answeredCount.textContent = String(answered);
+
+  const minis = els.navGrid.querySelectorAll('.mini');
+  minis.forEach((btn, i) => {
+    btn.classList.toggle('current', i === currentIndex);
+    btn.classList.toggle('answered', answers[i] !== null && answers[i] !== undefined);
+  });
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIndex];
+  if (!q) return;
+
+  els.qText.textContent = q.pregunta || '(sin enunciado)';
+  els.qMeta.textContent = `${q.id}${q.ref ? ' · ' + q.ref : ''}`;
+  els.qBadge.textContent = 'Pregunta';
+
+  els.options.innerHTML = '';
+
+  const selected = answers[currentIndex];
+  const isLocked = locked[currentIndex] === true;
+
+  q.opciones.forEach((text, idx) => {
+    const label = document.createElement('label');
+    label.className = 'opt';
+
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'opt';
+    input.value = String(idx);
+    input.checked = selected === idx;
+    input.disabled = isLocked; // en modo tema bloqueamos tras responder
+
+    const content = document.createElement('div');
+
+    const l = document.createElement('div');
+    l.className = 'label';
+    l.textContent = String.fromCharCode(65 + idx) + '.';
+
+    const t = document.createElement('div');
+    t.className = 'text';
+    t.textContent = text || '';
+
+    content.appendChild(l);
+    content.appendChild(t);
+
+    label.appendChild(input);
+    label.appendChild(content);
+
+    // click = seleccionar opción
+    label.addEventListener('click', (e) => {
+      // si click viene de label, el input se marca; evitamos doble
+      if (MODE === 'tema' && locked[currentIndex]) return;
+      selectAnswer(idx);
+    });
+
+    els.options.appendChild(label);
+  });
+
+  // aplicar feedback visual si ya respondió y está bloqueada (modo tema)
+  if (MODE === 'tema' && locked[currentIndex]) {
+    applyImmediateFeedbackStyles();
+  }
+}
+
+function applyImmediateFeedbackStyles() {
+  const q = QUESTIONS[currentIndex];
+  const selected = answers[currentIndex];
+  const correct = q.correctaIndex;
+
+  const opts = els.options.querySelectorAll('.opt');
+  opts.forEach((optEl, idx) => {
+    // reset inline
+    optEl.style.background = '';
+    optEl.style.borderColor = '';
+    optEl.style.color = '';
+
+    const textEl = optEl.querySelector('.text');
+    if (textEl) textEl.style.color = 'var(--text)';
+
+    if (idx === correct) {
+      // correcta siempre verde (y texto blanco)
+      optEl.style.background = 'rgba(60,255,180,.18)';
+      optEl.style.borderColor = 'rgba(60,255,180,.55)';
+      if (textEl) textEl.style.color = '#fff';
+    }
+    if (selected === idx && selected !== correct) {
+      // elegida incorrecta roja (y texto blanco)
+      optEl.style.background = 'rgba(255,120,120,.18)';
+      optEl.style.borderColor = 'rgba(255,120,120,.55)';
+      if (textEl) textEl.style.color = '#fff';
+    }
+    if (selected === idx && selected === correct) {
+      // elegida correcta verde fuerte
+      optEl.style.background = 'rgba(60,255,180,.26)';
+      optEl.style.borderColor = 'rgba(60,255,180,.70)';
+      if (textEl) textEl.style.color = '#fff';
+    }
+  });
+}
+
+/* =========================
+   NAV / ANSWERS
+   ========================= */
+
+function goTo(i) {
+  currentIndex = clamp(i, 0, QUESTIONS.length - 1);
+  updateProgressUI();
+  renderQuestion();
+}
+
+function next() { if (currentIndex < QUESTIONS.length - 1) goTo(currentIndex + 1); }
+function prev() { if (currentIndex > 0) goTo(currentIndex - 1); }
+
+function selectAnswer(idx) {
+  answers[currentIndex] = idx;
+  updateProgressUI();
+
+  if (MODE === 'tema') {
+    // feedback inmediato y bloquear pregunta
+    locked[currentIndex] = true;
+    renderQuestion(); // re-render para aplicar estilos y deshabilitar inputs
+  } else {
+    // general: se puede cambiar (no bloqueo)
+    renderQuestion();
+  }
+}
+
+/* =========================
+   TIMER (solo general)
+   ========================= */
+
+function startTimer() {
+  stopTimer();
+  timer = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft < 0) {
+      secondsLeft = 0;
+      els.timeLeft.textContent = formatTime(secondsLeft);
+      stopTimer();
+      finishTest();
+      return;
+    }
+    els.timeLeft.textContent = formatTime(secondsLeft);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timer) clearInterval(timer);
+  timer = null;
+}
+
+/* =========================
+   SCORE / RESULTADOS
+   ========================= */
+
+function computeResults() {
+  let ok = 0, bad = 0, blank = 0;
+
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const q = QUESTIONS[i];
+    const a = answers[i];
+
+    if (a === null || a === undefined) { blank++; continue; }
+    if (a === q.correctaIndex) ok++;
+    else bad++;
+  }
+
+  let score = ok;
+  if (MODE === 'general') {
+    score = ok - bad * CONFIG.generalPenalty;
+  }
+
+  return { ok, bad, blank, score };
+}
+
+function finishTest() {
+  const { ok, bad, blank, score } = computeResults();
+
+  els.rOk.textContent = String(ok);
+  els.rBad.textContent = String(bad);
+  els.rBlank.textContent = String(blank);
+  els.rScore.textContent = String(score.toFixed(2)).replace('.00', '');
+
+  // línea apto solo en general
+  if (MODE === 'general') {
+    const pass = score >= CONFIG.generalPassScore;
+    els.passLine.textContent = pass ? `APTO (≥ ${CONFIG.generalPassScore})` : `NO APTO (< ${CONFIG.generalPassScore})`;
+    els.passLine.className = `passline ${pass ? 'pass-ok' : 'pass-bad'}`;
+  } else {
+    els.passLine.textContent = '—';
+    els.passLine.className = 'passline';
+  }
+
+  renderReview();
+
+  // mostrar resultados
+  els.resultBox.classList.remove('hidden');
+  document.querySelector('.test-shell')?.classList.add('hidden');
+  document.querySelector('.test-header')?.classList.add('hidden');
+}
+
+function renderReview() {
+  els.review.innerHTML = '';
+
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const q = QUESTIONS[i];
+    const a = answers[i];
+    const correct = q.correctaIndex;
+
+    const box = document.createElement('div');
+    box.className = 'rev';
+
+    const top = document.createElement('div');
+    top.className = 'top';
+
+    const left = document.createElement('div');
+    left.innerHTML = `<strong>${i + 1}.</strong> <span class="muted">${q.id}</span>`;
+
+    const right = document.createElement('div');
+    right.className = 'ans';
+
+    if (a === null || a === undefined) {
+      box.classList.add('blank');
+      right.textContent = 'Blanco';
+    } else if (a === correct) {
+      box.classList.add('ok');
+      right.textContent = 'Correcta';
+    } else {
+      box.classList.add('bad');
+      right.textContent = 'Incorrecta';
+    }
+
+    top.appendChild(left);
+    top.appendChild(right);
+
+    const qtxt = document.createElement('div');
+    qtxt.textContent = q.pregunta;
+
+    const correctTxt = q.opciones[correct];
+    const userTxt = (a === null || a === undefined) ? '—' : q.opciones[a];
+
+    const detail = document.createElement('div');
+    detail.className = 'muted';
+    detail.innerHTML = `Tu respuesta: <strong>${escapeHtml(userTxt)}</strong><br/>Correcta: <strong>${escapeHtml(correctTxt)}</strong>`;
+
+    box.appendChild(top);
+    box.appendChild(qtxt);
+    box.appendChild(detail);
+
+    els.review.appendChild(box);
+  }
 }
 
 function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  return String(str || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
 
-// ========================
-// UI hooks (según tu test.html)
-// ========================
-const el = {
-  testTitle: document.getElementById("testTitle"),
-  testRules: document.getElementById("testRules"),
-  timeLeft: document.getElementById("timeLeft"),
-
-  idxNow: document.getElementById("idxNow"),
-  idxTotal: document.getElementById("idxTotal"),
-  answeredCount: document.getElementById("answeredCount"),
-
-  navGrid: document.getElementById("navGrid"),
-
-  qBadge: document.getElementById("qBadge"),
-  qMeta: document.getElementById("qMeta"),
-  qText: document.getElementById("qText"),
-  options: document.getElementById("options"),
-
-  btnPrev: document.getElementById("btnPrev"),
-  btnNext: document.getElementById("btnNext"),
-  btnFinish: document.getElementById("btnFinish"),
-  btnReset: document.getElementById("btnReset"),
-
-  // resultado
-  resultBox: document.getElementById("resultBox"),
-  rOk: document.getElementById("rOk"),
-  rBad: document.getElementById("rBad"),
-  rBlank: document.getElementById("rBlank"),
-  rScore: document.getElementById("rScore"),
-  passLine: document.getElementById("passLine"),
-  review: document.getElementById("review"),
-  btnDownload: document.getElementById("btnDownload"),
-};
-
-function setHidden(node, hidden) {
-  if (!node) return;
-  node.classList.toggle("hidden", hidden);
-}
-
-// ========================
-// Estado
-// ========================
-let modo = "practice"; // practice | exam
-let tema = null;
-
-let preguntas = []; // ya preparadas (opciones mezcladas)
-let idx = 0;
-
-let respuestas = []; // null o 0..3
-let bloqueadas = []; // practice: no permitir cambiar tras responder
-
-let examEndsAt = null;
-let timerInt = null;
-
-// ========================
-// Render
-// ========================
-function renderNavGrid() {
-  if (!el.navGrid) return;
-  el.navGrid.innerHTML = "";
-
-  preguntas.forEach((q, i) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "mini";
-    b.textContent = String(i + 1);
-
-    if (i === idx) b.classList.add("current");
-    if (respuestas[i] !== null) b.classList.add("answered");
-
-    b.addEventListener("click", () => {
-      idx = i;
-      render();
-    });
-
-    el.navGrid.appendChild(b);
-  });
-}
-
-// pinta colores en opciones para PRACTICE (tema)
-function aplicarColoresOpcionesPractice() {
-  if (!el.options) return;
-
-  const q = preguntas[idx];
-  const r = respuestas[idx];
-  if (r === null) return;
-
-  const botones = Array.from(el.options.querySelectorAll(".opt"));
-
-  // siempre: correcta en verde
-  const btnCorrect = botones[q.correctaIndex];
-  if (btnCorrect) {
-    btnCorrect.classList.add("is-correct");
-    btnCorrect.style.color = "#fff";
-  }
-
-  // si falló: elegida en rojo
-  if (r !== q.correctaIndex) {
-    const btnPicked = botones[r];
-    if (btnPicked) {
-      btnPicked.classList.add("is-wrong");
-      btnPicked.style.color = "#fff";
-    }
-  } else {
-    // si acertó, la elegida ya es la correcta (verde)
-    const btnPicked = botones[r];
-    if (btnPicked) btnPicked.style.color = "#fff";
-  }
-
-  // texto blanco en todas (para que se lea sobre rojo/verde)
-  botones.forEach((b) => (b.style.color = "#fff"));
-}
-
-function render() {
-  const q = preguntas[idx];
-  if (!q) return;
-
-  // título / reglas
-  if (el.testTitle) {
-    el.testTitle.textContent =
-      modo === "exam" ? "Test General (65)" : `Test Tema ${tema}`;
-  }
-  if (el.testRules) {
-    el.testRules.textContent =
-      modo === "exam"
-        ? "80 min · 4 opciones · +1 acierto · −0,25 fallo · 0 blanco · APTO ≥ 30"
-        : "4 opciones · feedback inmediato · sin penalización";
-  }
-
-  // timer (solo examen)
-  if (el.timeLeft) {
-    const box = el.timeLeft.closest(".timer");
-    if (box) box.style.display = modo === "exam" ? "block" : "none";
-  }
-
-  // progreso
-  const total = preguntas.length;
-  const respondidas = respuestas.filter((v) => v !== null).length;
-  if (el.idxNow) el.idxNow.textContent = String(idx + 1);
-  if (el.idxTotal) el.idxTotal.textContent = String(total);
-  if (el.answeredCount) el.answeredCount.textContent = String(respondidas);
-
-  // cabecera pregunta
-  if (el.qBadge) el.qBadge.textContent = `Pregunta`;
-  if (el.qMeta) {
-    el.qMeta.textContent = q.id ? `${q.id}${q.ref ? " · " + q.ref : ""}` : "";
-  }
-
-  // enunciado
-  if (el.qText) el.qText.textContent = q.pregunta || "(sin texto)";
-
-  // opciones (botones)
-  if (el.options) {
-    el.options.innerHTML = "";
-
-    const locked = modo === "practice" && bloqueadas[idx] === true;
-
-    q.opciones.forEach((txt, i) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "opt";
-      btn.textContent = txt;
-
-      // forzar texto blanco (tu fondo es oscuro)
-      btn.style.color = "#fff";
-
-      if (respuestas[idx] === i) btn.classList.add("selected");
-
-      btn.disabled = locked;
-
-      btn.addEventListener("click", () => onSelect(i));
-      el.options.appendChild(btn);
-    });
-
-    // si ya respondió en practice, colorear (verde/rojo)
-    if (modo === "practice" && respuestas[idx] !== null) {
-      aplicarColoresOpcionesPractice();
-    }
-  }
-
-  // nav grid
-  renderNavGrid();
-
-  // botones
-  if (el.btnPrev) el.btnPrev.disabled = idx === 0;
-  if (el.btnNext) el.btnNext.disabled = idx === preguntas.length - 1;
-}
-
-// ========================
-// Eventos
-// ========================
-function onSelect(optionIndex) {
-  const q = preguntas[idx];
-
-  if (modo === "practice") {
-    if (bloqueadas[idx]) return;
-
-    respuestas[idx] = optionIndex;
-    bloqueadas[idx] = true;
-
-    // render para deshabilitar y luego colorear
-    render();
-    return;
-  }
-
-  // examen: permitir cambiar hasta finalizar
-  respuestas[idx] = optionIndex;
-  render();
-}
-
-function prev() {
-  if (idx > 0) {
-    idx--;
-    render();
-  }
-}
-
-function next() {
-  if (idx < preguntas.length - 1) {
-    idx++;
-    render();
-  }
-}
-
-// ========================
-// Examen: timer + scoring
-// ========================
-function startExamTimer() {
-  examEndsAt = Date.now() + EXAM_DUR_MIN * 60 * 1000;
-  tickTimer();
-  timerInt = setInterval(tickTimer, 250);
-}
-
-function tickTimer() {
-  if (!el.timeLeft) return;
-
-  const ms = examEndsAt - Date.now();
-  if (ms <= 0) {
-    el.timeLeft.textContent = "00:00";
-    clearInterval(timerInt);
-    timerInt = null;
-    finalizar(); // auto-fin
-    return;
-  }
-
-  const totalSec = Math.floor(ms / 1000);
-  const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
-  const ss = String(totalSec % 60).padStart(2, "0");
-  el.timeLeft.textContent = `${mm}:${ss}`;
-}
-
-function calcularNotaExamen() {
-  let aciertos = 0;
-  let fallos = 0;
-  let blancos = 0;
-
-  preguntas.forEach((q, i) => {
-    const r = respuestas[i];
-    if (r === null) {
-      blancos++;
-      return;
-    }
-    if (r === q.correctaIndex) aciertos++;
-    else fallos++;
-  });
-
-  const nota = aciertos * 1 + fallos * -0.25 + blancos * 0;
-  return { aciertos, fallos, blancos, nota };
-}
-
-// ========================
-// Resultado / revisión (solo examen)
-// ========================
-function buildReviewExam() {
-  if (!el.review) return;
-  el.review.innerHTML = "";
-
-  preguntas.forEach((q, i) => {
-    const r = respuestas[i];
-    const ok = r !== null && r === q.correctaIndex;
-
-    const box = document.createElement("div");
-    box.className = "rev";
-    if (r === null) box.classList.add("blank");
-    else if (ok) box.classList.add("ok");
-    else box.classList.add("bad");
-
-    const top = document.createElement("div");
-    top.className = "top";
-    top.innerHTML = `<div><b>${i + 1}.</b> ${escapeHtml(q.pregunta)}</div><div class="ans">${r === null ? "BLANCO" : ok ? "OK" : "FALLO"}</div>`;
-    box.appendChild(top);
-
-    const correct = document.createElement("div");
-    correct.className = "muted";
-    correct.textContent = `Correcta: ${q.opciones[q.correctaIndex]}`;
-    box.appendChild(correct);
-
-    el.review.appendChild(box);
-  });
-}
-
-function showResultBox({ aciertos, fallos, blancos, nota }) {
-  setHidden(el.resultBox, false);
-
-  if (el.rOk) el.rOk.textContent = String(aciertos);
-  if (el.rBad) el.rBad.textContent = String(fallos);
-  if (el.rBlank) el.rBlank.textContent = String(blancos);
-  if (el.rScore) el.rScore.textContent = nota.toFixed(2);
-
-  const apto = nota >= EXAM_SCORE_OK;
-  if (el.passLine) {
-    el.passLine.textContent = apto
-      ? `✅ APTO (≥ ${EXAM_SCORE_OK})`
-      : `❌ NO APTO (mínimo ${EXAM_SCORE_OK})`;
-    el.passLine.classList.toggle("pass-ok", apto);
-    el.passLine.classList.toggle("pass-bad", !apto);
-  }
-
-  buildReviewExam();
-}
-
-// descarga respuestas (simple JSON)
 function downloadAnswers() {
-  const data = {
-    modo,
-    tema,
-    fecha: new Date().toISOString(),
-    preguntas: preguntas.map((q, i) => ({
-      num: i + 1,
-      id: q.id,
-      enunciado: q.pregunta,
-      opciones: q.opciones,
-      correctaIndex: q.correctaIndex,
-      respuestaIndex: respuestas[i],
-    })),
-  };
+  // CSV simple de respuestas
+  const lines = [];
+  lines.push('num,id,tema,seleccion,correcta,ok');
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const q = QUESTIONS[i];
+    const a = answers[i];
+    const correct = q.correctaIndex;
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
+    const selLetter = (a === null || a === undefined) ? '' : String.fromCharCode(65 + a);
+    const corLetter = String.fromCharCode(65 + correct);
+    const ok = (a === null || a === undefined) ? '' : (a === correct ? '1' : '0');
+
+    lines.push([
+      i + 1,
+      q.id,
+      q.tema,
+      selLetter,
+      corLetter,
+      ok
+    ].join(','));
+  }
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
-  a.download =
-    modo === "exam" ? "respuestas_examen.json" : `respuestas_tema_${tema}.json`;
+  a.download = MODE === 'general' ? 'respuestas_test_general.csv' : `respuestas_tema_${pad2(TEMA)}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
-
   URL.revokeObjectURL(url);
 }
 
-// ========================
-// Acciones
-// ========================
-function finalizar() {
-  if (modo === "practice") {
-    alert("Test del tema finalizado.");
+/* =========================
+   RESET
+   - reinicia respuestas y (opcional) genera nueva selección
+   ========================= */
+
+function resetTest({ newSelection } = { newSelection: false }) {
+  if (newSelection) limpiarSessionSeleccion();
+  init(); // recarga todo
+}
+
+/* =========================
+   INIT CARGA
+   ========================= */
+
+async function loadTemaRaw(temaNum) {
+  const path = CONFIG.csvPathByTema(temaNum);
+  return await cargarPreguntasCSV(path);
+}
+
+async function init() {
+  const q = getQuery();
+
+  MODE = q.general ? 'general' : 'tema';
+  TEMA = q.tema && !q.general ? q.tema : null;
+
+  // seguridad
+  if (MODE === 'tema' && (!TEMA || TEMA < 1 || TEMA > 9)) {
+    // si no hay tema válido, manda a inicio
+    location.href = '/';
     return;
   }
 
-  const res = calcularNotaExamen();
-  showResultBox(res);
-}
+  setModeUI();
 
-function reset() {
-  if (timerInt) {
-    clearInterval(timerInt);
-    timerInt = null;
-  }
+  // 1) cargar datos (tema o todos)
+  let rawAll = [];
+  let selection = cargarSeleccionDeSession();
 
-  idx = 0;
-  respuestas = preguntas.map(() => null);
-  bloqueadas = preguntas.map(() => false);
+  if (MODE === 'tema') {
+    const rawTema = await loadTemaRaw(TEMA);
+    rawAll = rawTema;
 
-  setHidden(el.resultBox, true);
+    // 2) crear / aplicar selección persistente
+    if (!selection || selection.mode !== 'tema' || selection.tema !== TEMA) {
+      selection = buildSelectionTema(rawTema, CONFIG.temaCountDefault);
+      guardarSeleccionEnSession(selection);
+    }
 
-  if (modo === "exam") startExamTimer();
-  render();
-}
+    const selectedRaw = aplicarSeleccion(rawTema, selection);
+    QUESTIONS = selectedRaw.map(prepararPreguntaParaMostrar);
 
-// ========================
-// Init
-// ========================
-(async function init() {
-  const info = getModoDesdeURL();
-  modo = info.modo;
-  tema = info.tema;
+    // Estado respuestas
+    answers = Array(QUESTIONS.length).fill(null);
+    locked = Array(QUESTIONS.length).fill(false);
 
-  let base = [];
-
-  if (modo === "practice") {
-    const ruta = temaToRutaCSV(tema);
-    base = await cargarPreguntasCSVDesdeRuta(ruta);
-    base = seleccionarN(base, PRACTICE_N);
   } else {
-    const rutas = [];
-    for (let i = 1; i <= 9; i++) rutas.push(temaToRutaCSV(i));
+    // GENERAL: cargar todos los temas (los que existan)
+    const allByTema = {};
+    for (let t = 1; t <= 9; t++) {
+      try {
+        allByTema[t] = await loadTemaRaw(t);
+        rawAll.push(...allByTema[t]);
+      } catch {
+        allByTema[t] = [];
+      }
+    }
 
-    const results = await Promise.allSettled(
-      rutas.map((r) => cargarPreguntasCSVDesdeRuta(r))
-    );
+    if (!selection || selection.mode !== 'general') {
+      selection = buildSelectionGeneral(allByTema, CONFIG.generalDistribution);
+      guardarSeleccionEnSession(selection);
+    }
 
-    const todas = [];
-    results.forEach((r) => {
-      if (r.status === "fulfilled") todas.push(...r.value);
-    });
+    const selectedRaw = aplicarSeleccion(rawAll, selection);
+    QUESTIONS = selectedRaw.map(prepararPreguntaParaMostrar);
 
-    base = seleccionarN(todas, EXAM_N);
+    answers = Array(QUESTIONS.length).fill(null);
+    locked = Array(QUESTIONS.length).fill(false); // no se usa en general (no bloqueamos)
   }
 
-  preguntas = base.map(prepararPreguntaParaMostrar);
-  respuestas = preguntas.map(() => null);
-  bloqueadas = preguntas.map(() => false);
-  idx = 0;
+  // Render inicial
+  currentIndex = 0;
+  els.resultBox.classList.add('hidden');
+  document.querySelector('.test-shell')?.classList.remove('hidden');
+  document.querySelector('.test-header')?.classList.remove('hidden');
 
-  if (el.btnPrev) el.btnPrev.addEventListener("click", prev);
-  if (el.btnNext) el.btnNext.addEventListener("click", next);
-  if (el.btnFinish) el.btnFinish.addEventListener("click", finalizar);
-  if (el.btnReset) el.btnReset.addEventListener("click", reset);
-  if (el.btnDownload) el.btnDownload.addEventListener("click", downloadAnswers);
+  renderNavGrid();
+  renderQuestion();
+}
 
-  setHidden(el.resultBox, true);
+/* =========================
+   EVENTOS
+   ========================= */
 
-  if (modo === "exam") startExamTimer();
+els.btnPrev?.addEventListener('click', (e) => { e.preventDefault(); prev(); });
+els.btnNext?.addEventListener('click', (e) => { e.preventDefault(); next(); });
 
-  render();
-})().catch((e) => {
-  console.error(e);
-  if (el.qText) el.qText.textContent = "Error cargando preguntas.";
-})();
+els.btnFinish?.addEventListener('click', (e) => {
+  e.preventDefault();
+  finishTest();
+});
+
+els.btnReset?.addEventListener('click', (e) => {
+  e.preventDefault();
+  // Reiniciar = nuevo intento con NUEVA selección aleatoria
+  resetTest({ newSelection: true });
+});
+
+els.btnDownload?.addEventListener('click', (e) => {
+  e.preventDefault();
+  downloadAnswers();
+});
+
+// init
+init();
