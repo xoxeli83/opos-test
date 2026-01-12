@@ -204,3 +204,13 @@
   color: #fff !important;
 }
 
+/* Progreso: acierto / fallo */
+.prog-btn.ok{
+  border-color: rgba(46, 204, 113, .75);
+  background: rgba(46, 204, 113, .18);
+}
+
+.prog-btn.ko{
+  border-color: rgba(231, 76, 60, .75);
+  background: rgba(231, 76, 60, .18);
+}
