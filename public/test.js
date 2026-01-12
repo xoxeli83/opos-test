@@ -68,6 +68,8 @@ let currentIndex = 0;
 let answers = [];
 // bloqueado: en test de tema, cuando eliges una opción se bloquea la pregunta (feedback inmediato)
 let locked = [];
+// NUEVO: null = sin responder, true = correcta, false = incorrecta
+let correctness = [];
 
 // timer solo general
 let timer = null;
@@ -225,14 +227,10 @@ function buildSelectionTema(preguntasTema, count) {
     mode: 'tema',
     tema: TEMA,
     ids: seleccion.map(p => p.id),
-    // guardamos un "seedless snapshot" para mantener el orden del test
-    // (solo ids en orden; las opciones se mezclarán por pregunta, pero se mantiene el orden de preguntas)
   };
 }
 
 function buildSelectionGeneral(allByTema, distribution) {
-  // allByTema: { [temaNum]: preguntas[] }
-  // distribution: { [temaNum]: count }
   const temas = Object.keys(distribution).map(Number);
 
   const picked = [];
@@ -243,7 +241,6 @@ function buildSelectionGeneral(allByTema, distribution) {
     picked.push(...sel);
   }
 
-  // Si faltan para llegar a 65, rellenamos con pool total (sin repetir)
   const needed = CONFIG.generalCount - picked.length;
   if (needed > 0) {
     const pickedIds = new Set(picked.map(p => p.id));
@@ -257,7 +254,6 @@ function buildSelectionGeneral(allByTema, distribution) {
     picked.push(...fill);
   }
 
-  // Si sobran (por ajustes raros), cortamos
   const final = shuffle(picked).slice(0, CONFIG.generalCount);
 
   return {
@@ -267,8 +263,6 @@ function buildSelectionGeneral(allByTema, distribution) {
 }
 
 function aplicarSeleccion(preguntasCargadas, selection) {
-  // preguntasCargadas: array de preguntas crudas del/los csv
-  // selection.ids: orden definitivo
   const map = new Map(preguntasCargadas.map(p => [p.id, p]));
   const ordered = selection.ids.map(id => map.get(id)).filter(Boolean);
   return ordered;
@@ -288,7 +282,6 @@ function setModeUI() {
   } else {
     els.testTitle.textContent = `Test Tema ${TEMA}`;
     els.testRules.textContent = '4 opciones · feedback inmediato · sin penalización';
-    // en tests por tema no usamos timer
     stopTimer();
     els.timeLeft.textContent = '—';
   }
@@ -316,8 +309,14 @@ function updateProgressUI() {
 
   const minis = els.navGrid.querySelectorAll('.mini');
   minis.forEach((btn, i) => {
+    const isAnswered = answers[i] !== null && answers[i] !== undefined;
+
     btn.classList.toggle('current', i === currentIndex);
-    btn.classList.toggle('answered', answers[i] !== null && answers[i] !== undefined);
+    btn.classList.toggle('answered', isAnswered);
+
+    // NUEVO: pintar acierto / fallo
+    btn.classList.toggle('ok', correctness[i] === true);
+    btn.classList.toggle('ko', correctness[i] === false);
   });
 }
 
@@ -343,7 +342,7 @@ function renderQuestion() {
     input.name = 'opt';
     input.value = String(idx);
     input.checked = selected === idx;
-    input.disabled = isLocked; // en modo tema bloqueamos tras responder
+    input.disabled = isLocked;
 
     const content = document.createElement('div');
 
@@ -361,9 +360,7 @@ function renderQuestion() {
     label.appendChild(input);
     label.appendChild(content);
 
-    // click = seleccionar opción
-    label.addEventListener('click', (e) => {
-      // si click viene de label, el input se marca; evitamos doble
+    label.addEventListener('click', () => {
       if (MODE === 'tema' && locked[currentIndex]) return;
       selectAnswer(idx);
     });
@@ -371,7 +368,6 @@ function renderQuestion() {
     els.options.appendChild(label);
   });
 
-  // aplicar feedback visual si ya respondió y está bloqueada (modo tema)
   if (MODE === 'tema' && locked[currentIndex]) {
     applyImmediateFeedbackStyles();
   }
@@ -384,7 +380,6 @@ function applyImmediateFeedbackStyles() {
 
   const opts = els.options.querySelectorAll('.opt');
   opts.forEach((optEl, idx) => {
-    // reset inline
     optEl.style.background = '';
     optEl.style.borderColor = '';
     optEl.style.color = '';
@@ -393,19 +388,16 @@ function applyImmediateFeedbackStyles() {
     if (textEl) textEl.style.color = 'var(--text)';
 
     if (idx === correct) {
-      // correcta siempre verde (y texto blanco)
       optEl.style.background = 'rgba(60,255,180,.18)';
       optEl.style.borderColor = 'rgba(60,255,180,.55)';
       if (textEl) textEl.style.color = '#fff';
     }
     if (selected === idx && selected !== correct) {
-      // elegida incorrecta roja (y texto blanco)
       optEl.style.background = 'rgba(255,120,120,.18)';
       optEl.style.borderColor = 'rgba(255,120,120,.55)';
       if (textEl) textEl.style.color = '#fff';
     }
     if (selected === idx && selected === correct) {
-      // elegida correcta verde fuerte
       optEl.style.background = 'rgba(60,255,180,.26)';
       optEl.style.borderColor = 'rgba(60,255,180,.70)';
       if (textEl) textEl.style.color = '#fff';
@@ -427,15 +419,19 @@ function next() { if (currentIndex < QUESTIONS.length - 1) goTo(currentIndex + 1
 function prev() { if (currentIndex > 0) goTo(currentIndex - 1); }
 
 function selectAnswer(idx) {
+  const q = QUESTIONS[currentIndex];
+
   answers[currentIndex] = idx;
+
+  // NUEVO: guarda si está bien o mal
+  correctness[currentIndex] = (idx === q.correctaIndex);
+
   updateProgressUI();
 
   if (MODE === 'tema') {
-    // feedback inmediato y bloquear pregunta
     locked[currentIndex] = true;
-    renderQuestion(); // re-render para aplicar estilos y deshabilitar inputs
+    renderQuestion();
   } else {
-    // general: se puede cambiar (no bloqueo)
     renderQuestion();
   }
 }
@@ -496,7 +492,6 @@ function finishTest() {
   els.rBlank.textContent = String(blank);
   els.rScore.textContent = String(score.toFixed(2)).replace('.00', '');
 
-  // línea apto solo en general
   if (MODE === 'general') {
     const pass = score >= CONFIG.generalPassScore;
     els.passLine.textContent = pass ? `APTO (≥ ${CONFIG.generalPassScore})` : `NO APTO (< ${CONFIG.generalPassScore})`;
@@ -508,7 +503,6 @@ function finishTest() {
 
   renderReview();
 
-  // mostrar resultados
   els.resultBox.classList.remove('hidden');
   document.querySelector('.test-shell')?.classList.add('hidden');
   document.querySelector('.test-header')?.classList.add('hidden');
@@ -576,7 +570,6 @@ function escapeHtml(str) {
 }
 
 function downloadAnswers() {
-  // CSV simple de respuestas
   const lines = [];
   lines.push('num,id,tema,seleccion,correcta,ok');
   for (let i = 0; i < QUESTIONS.length; i++) {
@@ -612,12 +605,11 @@ function downloadAnswers() {
 
 /* =========================
    RESET
-   - reinicia respuestas y (opcional) genera nueva selección
    ========================= */
 
 function resetTest({ newSelection } = { newSelection: false }) {
   if (newSelection) limpiarSessionSeleccion();
-  init(); // recarga todo
+  init();
 }
 
 /* =========================
@@ -635,16 +627,13 @@ async function init() {
   MODE = q.general ? 'general' : 'tema';
   TEMA = q.tema && !q.general ? q.tema : null;
 
-  // seguridad
   if (MODE === 'tema' && (!TEMA || TEMA < 1 || TEMA > 9)) {
-    // si no hay tema válido, manda a inicio
     location.href = '/';
     return;
   }
 
   setModeUI();
 
-  // 1) cargar datos (tema o todos)
   let rawAll = [];
   let selection = cargarSeleccionDeSession();
 
@@ -652,7 +641,6 @@ async function init() {
     const rawTema = await loadTemaRaw(TEMA);
     rawAll = rawTema;
 
-    // 2) crear / aplicar selección persistente
     if (!selection || selection.mode !== 'tema' || selection.tema !== TEMA) {
       selection = buildSelectionTema(rawTema, CONFIG.temaCountDefault);
       guardarSeleccionEnSession(selection);
@@ -661,12 +649,11 @@ async function init() {
     const selectedRaw = aplicarSeleccion(rawTema, selection);
     QUESTIONS = selectedRaw.map(prepararPreguntaParaMostrar);
 
-    // Estado respuestas
     answers = Array(QUESTIONS.length).fill(null);
     locked = Array(QUESTIONS.length).fill(false);
+    correctness = Array(QUESTIONS.length).fill(null);
 
   } else {
-    // GENERAL: cargar todos los temas (los que existan)
     const allByTema = {};
     for (let t = 1; t <= 9; t++) {
       try {
@@ -686,10 +673,10 @@ async function init() {
     QUESTIONS = selectedRaw.map(prepararPreguntaParaMostrar);
 
     answers = Array(QUESTIONS.length).fill(null);
-    locked = Array(QUESTIONS.length).fill(false); // no se usa en general (no bloqueamos)
+    locked = Array(QUESTIONS.length).fill(false);
+    correctness = Array(QUESTIONS.length).fill(null);
   }
 
-  // Render inicial
   currentIndex = 0;
   els.resultBox.classList.add('hidden');
   document.querySelector('.test-shell')?.classList.remove('hidden');
@@ -713,7 +700,6 @@ els.btnFinish?.addEventListener('click', (e) => {
 
 els.btnReset?.addEventListener('click', (e) => {
   e.preventDefault();
-  // Reiniciar = nuevo intento con NUEVA selección aleatoria
   resetTest({ newSelection: true });
 });
 
