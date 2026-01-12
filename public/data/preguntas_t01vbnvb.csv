@@ -1,7 +1,0 @@
-id,tema,pregunta,a,b,c,d,correcta,ref
-T01-0001,1,"¿En qué año fue aprobada la Constitución Española vigente?","1977","1978","1981","1975","B","CE 1978"
-T01-0002,1,"¿Quién es el titular de la soberanía nacional según la Constitución Española?","El Rey","El Estado","El pueblo español","Las Cortes Generales","C","CE art.1.2"
-T01-0003,1,"¿Qué forma política adopta el Estado español según la Constitución?","República parlamentaria","Monarquía absoluta","Monarquía parlamentaria","Estado federal","C","CE art.1.3"
-T01-0004,1,"¿Cuál de los siguientes valores superiores del ordenamiento jurídico recoge la Constitución?","Seguridad","Legalidad","Justicia","Solidaridad","C","CE art.1.1"
-T01-0005,1,"¿Dónde reside la soberanía nacional según la Constitución Española?","En las Cortes Generales","En el Rey","En el Gobierno","En el pueblo español","D","CE art.1.2"
-
