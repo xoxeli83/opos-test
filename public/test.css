@@ -69,6 +69,16 @@
 }
 .mini.answered{ background: rgba(60,255,180,.14); }
 .mini.current{ outline: 2px solid rgba(0,200,255,.55); }
+/* Progreso: acierto / fallo */
+.mini.ok{
+  border-color: rgba(46,204,113,.75);
+  background: rgba(46,204,113,.18);
+}
+.mini.ko{
+  border-color: rgba(231,76,60,.75);
+  background: rgba(231,76,60,.18);
+}
+
 
 .panel-actions{
   display:flex;
