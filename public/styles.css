@@ -268,3 +268,34 @@ body{
 }
 .audio-btn:hover{ background:rgba(255,255,255,.14); }
 .audio-btn.ghost{ background:rgba(255,255,255,.06); }
+/* Videos PRL en una sola fila */
+.prl-videos{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;          /* si no cabe en móvil, baja a otra línea */
+  margin-top:10px;
+}
+
+.prl-videos a{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.06);
+  color:#9ad7ff;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.prl-videos a:hover{
+  background: rgba(255,255,255,.10);
+  transform: translateY(-1px);
+}
+
+.yt-icon{
+  width:18px;
+  height:18px;
+  display:block;
+}
