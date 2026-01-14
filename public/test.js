@@ -109,28 +109,26 @@ function formatTime(sec) {
 }
 
 /* =========================
-   CSV LOADER (robusto encoding + delimiter)
+   CSV LOADER (robusto encoding + multiline)
    ========================= */
 
 async function cargarPreguntasCSV(path) {
   const res = await fetch(path, { cache: 'no-store' });
   if (!res.ok) throw new Error(`No se pudo cargar ${path}`);
 
-  // Leemos como bytes para poder decodificar bien
   const buf = await res.arrayBuffer();
 
-  // 1) Intento UTF-8
-  let text = new TextDecoder('utf-8', { fatal: false }).decode(buf);
+  // probamos UTF-8 vs Latin1 y elegimos el que menos "�" tenga
+  const decUtf8 = new TextDecoder('utf-8', { fatal: false });
+  const decLatin1 = new TextDecoder('iso-8859-1', { fatal: false });
 
-  // Si hay muchos caracteres de reemplazo, probamos ISO-8859-1 (latin1)
-  // (esto suele arreglar "d�a", "M�ximo", etc.)
-  const replacementCount = (text.match(/\uFFFD/g) || []).length;
-  if (replacementCount > 0) {
-    const textLatin1 = new TextDecoder('iso-8859-1', { fatal: false }).decode(buf);
-    // elegimos el que tenga menos reemplazos
-    const rep2 = (textLatin1.match(/\uFFFD/g) || []).length;
-    if (rep2 < replacementCount) text = textLatin1;
-  }
+  const tUtf8 = decUtf8.decode(buf);
+  const tLatin1 = decLatin1.decode(buf);
+
+  const badUtf8 = (tUtf8.match(/\uFFFD/g) || []).length;
+  const badLatin1 = (tLatin1.match(/\uFFFD/g) || []).length;
+
+  let text = badLatin1 < badUtf8 ? tLatin1 : tUtf8;
 
   // quitar BOM si existiera
   if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
@@ -138,7 +136,13 @@ async function cargarPreguntasCSV(path) {
   return parseCSV(text);
 }
 
-// CSV simple con comillas, autodetección , o ;
+function detectDelimiter(line) {
+  const commas = (line.match(/,/g) || []).length;
+  const semis = (line.match(/;/g) || []).length;
+  return (semis > commas) ? ';' : ',';
+}
+
+// CSV robusto: comillas + saltos de línea dentro de comillas
 function parseCSV(csvText) {
   const firstLine = (csvText.split(/\r?\n/)[0] || '');
   const delimiter = detectDelimiter(firstLine);
@@ -152,59 +156,85 @@ function parseCSV(csvText) {
     const ch = csvText[i];
     const next = csvText[i + 1];
 
+    // "" dentro de comillas -> "
     if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+    // toggle comillas
     if (ch === '"') { inQuotes = !inQuotes; continue; }
 
+    // separador
     if (ch === delimiter && !inQuotes) {
-      row.push(cur.trim());
+      row.push(cur);
       cur = '';
       continue;
     }
+
+    // fin de línea (solo si NO estamos dentro de comillas)
     if ((ch === '\n' || ch === '\r') && !inQuotes) {
       if (ch === '\r' && next === '\n') i++;
-      row.push(cur.trim());
+      row.push(cur);
       cur = '';
-      if (row.length > 1) rows.push(row);
+      if (row.length) rows.push(row);
       row = [];
       continue;
     }
+
     cur += ch;
   }
+
+  // flush final
   if (cur.length || row.length) {
-    row.push(cur.trim());
-    if (row.length > 1) rows.push(row);
+    row.push(cur);
+    rows.push(row);
   }
 
-  const header = (rows.shift() || []).map(h => h.replace(/^"|"$/g, ''));
+  // si alguna fila vino como "una celda con comas", la re-partimos respetando comillas
+  function splitRowString(line) {
+    const out = [];
+    let c = '';
+    let q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      const nx = line[i + 1];
+      if (ch === '"' && q && nx === '"') { c += '"'; i++; continue; }
+      if (ch === '"') { q = !q; continue; }
+      if (ch === delimiter && !q) { out.push(c); c = ''; continue; }
+      c += ch;
+    }
+    out.push(c);
+    return out;
+  }
 
-  const out = rows
-    .filter(r => r.some(v => v !== ''))
-    .map(r => {
-      const obj = {};
-      header.forEach((h, idx) => obj[h] = (r[idx] ?? '').replace(/^"|"$/g, ''));
+  const header = (rows.shift() || []).map(h => String(h).trim().replace(/^"|"$/g, ''));
 
-      // normalizar
-      obj.tema = Number(obj.tema);
-      obj.correcta = String(obj.correcta || '').trim().toUpperCase();
+  const out = [];
+  for (const r0 of rows) {
+    let r = r0;
 
-      return obj;
-    })
-    // filtramos filas inválidas (si no hay id/pregunta/opciones)
-    .filter(o =>
-      o.id && o.pregunta &&
-      (o.a || o.b || o.c || o.d) &&
-      ['A', 'B', 'C', 'D'].includes(o.correcta)
-    );
+    // parche "una celda"
+    if (r.length === 1 && String(r[0]).includes(delimiter)) {
+      r = splitRowString(String(r[0]));
+    }
+
+    if (!r || r.length < 2) continue;
+
+    const obj = {};
+    header.forEach((h, idx) => {
+      obj[h] = String(r[idx] ?? '').trim().replace(/^"|"$/g, '');
+    });
+
+    // normalizar
+    obj.tema = Number(String(obj.tema ?? '').match(/(\d+)/)?.[1] ?? obj.tema);
+    obj.correcta = String(obj.correcta || '').trim().toUpperCase();
+
+    // filtrar inválidas
+    if (!obj.id || !obj.pregunta) continue;
+    if (!(obj.a || obj.b || obj.c || obj.d)) continue;
+    if (!['A', 'B', 'C', 'D'].includes(obj.correcta)) continue;
+
+    out.push(obj);
+  }
 
   return out;
-}
-
-function detectDelimiter(line) {
-  // si hay ; y no hay , (o hay muchos más ;)
-  const commas = (line.match(/,/g) || []).length;
-  const semis = (line.match(/;/g) || []).length;
-  if (semis > commas) return ';';
-  return ',';
 }
 
 /* =========================
@@ -349,7 +379,7 @@ function updateProgressUI() {
     // Mantén tu estilo de "answered" si lo tienes en CSS
     btn.classList.toggle('answered', isAnswered);
 
-    // NUEVO: en modo tema, si está bloqueada, pintamos OK/KO
+    // en modo tema, si está bloqueada, pintamos OK/KO
     if (MODE === 'tema' && locked[i] === true && isAnswered && QUESTIONS[i]) {
       const ok = answers[i] === QUESTIONS[i].correctaIndex;
       if (ok) {
