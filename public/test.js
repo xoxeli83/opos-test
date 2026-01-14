@@ -15,11 +15,13 @@ const CONFIG = {
   generalPenalty: 0.25,
   generalPassScore: 30,
 
+  // OJO: ajusta si quieres otro reparto
   generalDistribution: { 1: 9, 2: 6, 3: 8, 4: 8, 5: 8, 6: 5, 7: 4, 8: 6, 9: 3, 10: 8 },
-
 
   csvPathByTema: (temaNum) => `/data/preguntas_t${String(temaNum).padStart(2, '0')}.csv`,
 };
+
+const MAX_TEMA = 10;
 
 /* ---------- DOM ---------- */
 const $ = (id) => document.getElementById(id);
@@ -56,7 +58,7 @@ const els = {
 
 /* ---------- STATE ---------- */
 let MODE = 'tema'; // 'tema' | 'general'
-let TEMA = null;   // 1..9 si MODE=tema
+let TEMA = null;   // 1..MAX_TEMA si MODE=tema
 let QUESTIONS = [];
 let currentIndex = 0;
 
@@ -157,19 +159,15 @@ function parseCSV(csvText) {
     const ch = csvText[i];
     const next = csvText[i + 1];
 
-    // "" dentro de comillas -> "
     if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
-    // toggle comillas
     if (ch === '"') { inQuotes = !inQuotes; continue; }
 
-    // separador
     if (ch === delimiter && !inQuotes) {
       row.push(cur);
       cur = '';
       continue;
     }
 
-    // fin de línea (solo si NO estamos dentro de comillas)
     if ((ch === '\n' || ch === '\r') && !inQuotes) {
       if (ch === '\r' && next === '\n') i++;
       row.push(cur);
@@ -182,13 +180,11 @@ function parseCSV(csvText) {
     cur += ch;
   }
 
-  // flush final
   if (cur.length || row.length) {
     row.push(cur);
     rows.push(row);
   }
 
-  // si alguna fila vino como "una celda con comas", la re-partimos respetando comillas
   function splitRowString(line) {
     const out = [];
     let c = '';
@@ -211,7 +207,6 @@ function parseCSV(csvText) {
   for (const r0 of rows) {
     let r = r0;
 
-    // parche "una celda"
     if (r.length === 1 && String(r[0]).includes(delimiter)) {
       r = splitRowString(String(r[0]));
     }
@@ -223,11 +218,9 @@ function parseCSV(csvText) {
       obj[h] = String(r[idx] ?? '').trim().replace(/^"|"$/g, '');
     });
 
-    // normalizar
     obj.tema = Number(String(obj.tema ?? '').match(/(\d+)/)?.[1] ?? obj.tema);
     obj.correcta = String(obj.correcta || '').trim().toUpperCase();
 
-    // filtrar inválidas
     if (!obj.id || !obj.pregunta) continue;
     if (!(obj.a || obj.b || obj.c || obj.d)) continue;
     if (!['A', 'B', 'C', 'D'].includes(obj.correcta)) continue;
@@ -316,16 +309,12 @@ function buildSelectionGeneral(allByTema, distribution) {
 
   const final = shuffle(picked).slice(0, CONFIG.generalCount);
 
-  return {
-    mode: 'general',
-    ids: final.map(p => p.id),
-  };
+  return { mode: 'general', ids: final.map(p => p.id) };
 }
 
 function aplicarSeleccion(preguntasCargadas, selection) {
   const map = new Map(preguntasCargadas.map(p => [p.id, p]));
-  const ordered = selection.ids.map(id => map.get(id)).filter(Boolean);
-  return ordered;
+  return selection.ids.map(id => map.get(id)).filter(Boolean);
 }
 
 /* =========================
@@ -372,15 +361,12 @@ function updateProgressUI() {
     const isAnswered = answers[i] !== null && answers[i] !== undefined;
     btn.classList.toggle('current', i === currentIndex);
 
-    // Quitamos estilos inline previos
     btn.style.background = '';
     btn.style.borderColor = '';
     btn.style.color = '';
 
-    // Mantén tu estilo de "answered" si lo tienes en CSS
     btn.classList.toggle('answered', isAnswered);
 
-    // en modo tema, si está bloqueada, pintamos OK/KO
     if (MODE === 'tema' && locked[i] === true && isAnswered && QUESTIONS[i]) {
       const ok = answers[i] === QUESTIONS[i].correctaIndex;
       if (ok) {
@@ -496,11 +482,7 @@ function prev() { if (currentIndex > 0) goTo(currentIndex - 1); }
 
 function selectAnswer(idx) {
   answers[currentIndex] = idx;
-
-  if (MODE === 'tema') {
-    locked[currentIndex] = true;
-  }
-
+  if (MODE === 'tema') locked[currentIndex] = true;
   updateProgressUI();
   renderQuestion();
 }
@@ -677,8 +659,7 @@ function resetTest({ newSelection } = { newSelection: false }) {
    ========================= */
 
 async function loadTemaRaw(temaNum) {
-  const path = CONFIG.csvPathByTema(temaNum);
-  return await cargarPreguntasCSV(path);
+  return await cargarPreguntasCSV(CONFIG.csvPathByTema(temaNum));
 }
 
 async function init() {
@@ -687,7 +668,8 @@ async function init() {
   MODE = q.general ? 'general' : 'tema';
   TEMA = q.tema && !q.general ? q.tema : null;
 
-  if (MODE === 'tema' && (!TEMA || TEMA < 1 || TEMA > 9)) {
+  // ✅ AQUÍ estaba el fallo: antes era > 9
+  if (MODE === 'tema' && (!TEMA || TEMA < 1 || TEMA > MAX_TEMA)) {
     location.href = '/';
     return;
   }
@@ -699,7 +681,6 @@ async function init() {
 
   if (MODE === 'tema') {
     const rawTema = await loadTemaRaw(TEMA);
-    rawAll = rawTema;
 
     if (!selection || selection.mode !== 'tema' || selection.tema !== TEMA) {
       selection = buildSelectionTema(rawTema, CONFIG.temaCountDefault);
@@ -714,7 +695,7 @@ async function init() {
 
   } else {
     const allByTema = {};
-    for (let t = 1; t <= 10; t++) {
+    for (let t = 1; t <= MAX_TEMA; t++) {
       try {
         allByTema[t] = await loadTemaRaw(t);
         rawAll.push(...allByTema[t]);
