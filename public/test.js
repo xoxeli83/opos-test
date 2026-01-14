@@ -15,7 +15,8 @@ const CONFIG = {
   generalPenalty: 0.25,
   generalPassScore: 30,
 
-  generalDistribution: { 1: 10, 2: 6, 3: 8, 4: 8, 5: 8, 6: 8, 7: 6, 8: 6, 9: 5 },
+  generalDistribution: { 1: 9, 2: 6, 3: 8, 4: 8, 5: 8, 6: 5, 7: 4, 8: 6, 9: 3, 10: 8 },
+
 
   csvPathByTema: (temaNum) => `/data/preguntas_t${String(temaNum).padStart(2, '0')}.csv`,
 };
@@ -713,7 +714,7 @@ async function init() {
 
   } else {
     const allByTema = {};
-    for (let t = 1; t <= 9; t++) {
+    for (let t = 1; t <= 10; t++) {
       try {
         allByTema[t] = await loadTemaRaw(t);
         rawAll.push(...allByTema[t]);
