@@ -8,20 +8,15 @@
 
 /* ---------- CONFIG ---------- */
 const CONFIG = {
-  // nº preguntas por test de tema (puedes cambiarlo)
   temaCountDefault: 20,
 
-  // test general
   generalCount: 65,
   generalTimeSeconds: 80 * 60,
   generalPenalty: 0.25,
   generalPassScore: 30,
 
-  // reparto por tema en el general (se ajusta si no hay suficientes)
-  // Si quieres otro reparto, cámbialo aquí.
   generalDistribution: { 1: 10, 2: 6, 3: 8, 4: 8, 5: 8, 6: 8, 7: 6, 8: 6, 9: 5 },
 
-  // rutas csv por tema (t01..t09)
   csvPathByTema: (temaNum) => `/data/preguntas_t${String(temaNum).padStart(2, '0')}.csv`,
 };
 
@@ -61,17 +56,12 @@ const els = {
 /* ---------- STATE ---------- */
 let MODE = 'tema'; // 'tema' | 'general'
 let TEMA = null;   // 1..9 si MODE=tema
-let QUESTIONS = []; // preguntas ya "preparadas" (opciones mezcladas y correctaIndex calculado)
+let QUESTIONS = [];
 let currentIndex = 0;
 
-// respuestas del usuario: { [idx]: selectedIndex (0..3) o null }
 let answers = [];
-// bloqueado: en test de tema, cuando eliges una opción se bloquea la pregunta (feedback inmediato)
 let locked = [];
-// NUEVO: null = sin responder, true = correcta, false = incorrecta
-let correctness = [];
 
-// timer solo general
 let timer = null;
 let secondsLeft = 0;
 
@@ -87,7 +77,6 @@ function getQuery() {
 }
 
 function sessionKey() {
-  // clave única por modo + tema
   if (MODE === 'general') return `opostest_selection_general_v1`;
   return `opostest_selection_tema_${String(TEMA).padStart(2, '0')}_v1`;
 }
@@ -120,18 +109,40 @@ function formatTime(sec) {
 }
 
 /* =========================
-   CSV LOADER
+   CSV LOADER (robusto encoding + delimiter)
    ========================= */
 
 async function cargarPreguntasCSV(path) {
   const res = await fetch(path, { cache: 'no-store' });
   if (!res.ok) throw new Error(`No se pudo cargar ${path}`);
-  const text = await res.text();
+
+  // Leemos como bytes para poder decodificar bien
+  const buf = await res.arrayBuffer();
+
+  // 1) Intento UTF-8
+  let text = new TextDecoder('utf-8', { fatal: false }).decode(buf);
+
+  // Si hay muchos caracteres de reemplazo, probamos ISO-8859-1 (latin1)
+  // (esto suele arreglar "d�a", "M�ximo", etc.)
+  const replacementCount = (text.match(/\uFFFD/g) || []).length;
+  if (replacementCount > 0) {
+    const textLatin1 = new TextDecoder('iso-8859-1', { fatal: false }).decode(buf);
+    // elegimos el que tenga menos reemplazos
+    const rep2 = (textLatin1.match(/\uFFFD/g) || []).length;
+    if (rep2 < replacementCount) text = textLatin1;
+  }
+
+  // quitar BOM si existiera
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
   return parseCSV(text);
 }
 
-// CSV simple con comillas
+// CSV simple con comillas, autodetección , o ;
 function parseCSV(csvText) {
+  const firstLine = (csvText.split(/\r?\n/)[0] || '');
+  const delimiter = detectDelimiter(firstLine);
+
   const rows = [];
   let row = [];
   let cur = '';
@@ -144,7 +155,7 @@ function parseCSV(csvText) {
     if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
     if (ch === '"') { inQuotes = !inQuotes; continue; }
 
-    if (ch === ',' && !inQuotes) {
+    if (ch === delimiter && !inQuotes) {
       row.push(cur.trim());
       cur = '';
       continue;
@@ -165,20 +176,39 @@ function parseCSV(csvText) {
   }
 
   const header = (rows.shift() || []).map(h => h.replace(/^"|"$/g, ''));
-  return rows
+
+  const out = rows
     .filter(r => r.some(v => v !== ''))
     .map(r => {
       const obj = {};
       header.forEach((h, idx) => obj[h] = (r[idx] ?? '').replace(/^"|"$/g, ''));
+
+      // normalizar
       obj.tema = Number(obj.tema);
-      obj.correcta = String(obj.correcta || '').trim().toUpperCase(); // A/B/C/D
+      obj.correcta = String(obj.correcta || '').trim().toUpperCase();
+
       return obj;
-    });
+    })
+    // filtramos filas inválidas (si no hay id/pregunta/opciones)
+    .filter(o =>
+      o.id && o.pregunta &&
+      (o.a || o.b || o.c || o.d) &&
+      ['A', 'B', 'C', 'D'].includes(o.correcta)
+    );
+
+  return out;
+}
+
+function detectDelimiter(line) {
+  // si hay ; y no hay , (o hay muchos más ;)
+  const commas = (line.match(/,/g) || []).length;
+  const semis = (line.match(/;/g) || []).length;
+  if (semis > commas) return ';';
+  return ',';
 }
 
 /* =========================
    PREPARAR PREGUNTA
-   - Mezcla opciones y calcula correctaIndex
    ========================= */
 
 function prepararPreguntaParaMostrar(p) {
@@ -200,13 +230,12 @@ function prepararPreguntaParaMostrar(p) {
     pregunta: p.pregunta,
     ref: p.ref || '',
     opciones: mezcladas.map(o => o.text),
-    correctaIndex: correctaMezcladaIndex, // 0..3
+    correctaIndex: correctaMezcladaIndex,
   };
 }
 
 /* =========================
-   SELECCIÓN ALEATORIA SIN REPETIR
-   + Persistencia (sessionStorage)
+   SELECCIÓN + Persistencia
    ========================= */
 
 function guardarSeleccionEnSession(data) {
@@ -310,13 +339,29 @@ function updateProgressUI() {
   const minis = els.navGrid.querySelectorAll('.mini');
   minis.forEach((btn, i) => {
     const isAnswered = answers[i] !== null && answers[i] !== undefined;
-
     btn.classList.toggle('current', i === currentIndex);
+
+    // Quitamos estilos inline previos
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+
+    // Mantén tu estilo de "answered" si lo tienes en CSS
     btn.classList.toggle('answered', isAnswered);
 
-    // NUEVO: pintar acierto / fallo
-    btn.classList.toggle('ok', correctness[i] === true);
-    btn.classList.toggle('ko', correctness[i] === false);
+    // NUEVO: en modo tema, si está bloqueada, pintamos OK/KO
+    if (MODE === 'tema' && locked[i] === true && isAnswered && QUESTIONS[i]) {
+      const ok = answers[i] === QUESTIONS[i].correctaIndex;
+      if (ok) {
+        btn.style.background = 'rgba(60,255,180,.22)';
+        btn.style.borderColor = 'rgba(60,255,180,.65)';
+        btn.style.color = '#fff';
+      } else {
+        btn.style.background = 'rgba(255,120,120,.22)';
+        btn.style.borderColor = 'rgba(255,120,120,.65)';
+        btn.style.color = '#fff';
+      }
+    }
   });
 }
 
@@ -419,21 +464,14 @@ function next() { if (currentIndex < QUESTIONS.length - 1) goTo(currentIndex + 1
 function prev() { if (currentIndex > 0) goTo(currentIndex - 1); }
 
 function selectAnswer(idx) {
-  const q = QUESTIONS[currentIndex];
-
   answers[currentIndex] = idx;
-
-  // NUEVO: guarda si está bien o mal
-  correctness[currentIndex] = (idx === q.correctaIndex);
-
-  updateProgressUI();
 
   if (MODE === 'tema') {
     locked[currentIndex] = true;
-    renderQuestion();
-  } else {
-    renderQuestion();
   }
+
+  updateProgressUI();
+  renderQuestion();
 }
 
 /* =========================
@@ -477,9 +515,7 @@ function computeResults() {
   }
 
   let score = ok;
-  if (MODE === 'general') {
-    score = ok - bad * CONFIG.generalPenalty;
-  }
+  if (MODE === 'general') score = ok - bad * CONFIG.generalPenalty;
 
   return { ok, bad, blank, score };
 }
@@ -581,14 +617,7 @@ function downloadAnswers() {
     const corLetter = String.fromCharCode(65 + correct);
     const ok = (a === null || a === undefined) ? '' : (a === correct ? '1' : '0');
 
-    lines.push([
-      i + 1,
-      q.id,
-      q.tema,
-      selLetter,
-      corLetter,
-      ok
-    ].join(','));
+    lines.push([i + 1, q.id, q.tema, selLetter, corLetter, ok].join(','));
   }
 
   const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
@@ -613,7 +642,7 @@ function resetTest({ newSelection } = { newSelection: false }) {
 }
 
 /* =========================
-   INIT CARGA
+   INIT
    ========================= */
 
 async function loadTemaRaw(temaNum) {
@@ -651,7 +680,6 @@ async function init() {
 
     answers = Array(QUESTIONS.length).fill(null);
     locked = Array(QUESTIONS.length).fill(false);
-    correctness = Array(QUESTIONS.length).fill(null);
 
   } else {
     const allByTema = {};
@@ -674,7 +702,6 @@ async function init() {
 
     answers = Array(QUESTIONS.length).fill(null);
     locked = Array(QUESTIONS.length).fill(false);
-    correctness = Array(QUESTIONS.length).fill(null);
   }
 
   currentIndex = 0;
@@ -708,5 +735,4 @@ els.btnDownload?.addEventListener('click', (e) => {
   downloadAnswers();
 });
 
-// init
 init();
