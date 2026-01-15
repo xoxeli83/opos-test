@@ -296,3 +296,9 @@ body{
   height:18px;
 }
 
+.brand-logo{
+  height: 34px;          /* tamaño estable */
+  width: auto;           /* mantiene proporción */
+  object-fit: contain;
+  display: block;
+}
